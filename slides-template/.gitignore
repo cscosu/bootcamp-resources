@@ -1,0 +1,8 @@
+*.log
+*.nav
+*.out
+*.aux
+*.snm
+*.toc
+*.vrb
+_minted-main/
