@@ -49,6 +49,7 @@
 
 \begin{document}
 
+{ % this brace groups the background template with just the first slide
 \usebackgroundtemplate{%
     \begin{tikzpicture}
         \path [outer color = blue!5, inner color = blue!1]
@@ -57,6 +58,7 @@
     \end{tikzpicture}
 }
 
+
 \begin{frame}
     \titlepage % Print the title page as the first slide
     \begin{tikzpicture}
@@ -64,7 +66,8 @@
     \end{tikzpicture}
 \end{frame}
 
-
+} % end background template
+\setbeamercolor{background canvas}{bg=almostblack}
 \begin{frame}
     \frametitle{Overview} % Table of contents slide, comment this block out to remove it
     \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
