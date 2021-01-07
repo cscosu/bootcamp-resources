@@ -20,3 +20,14 @@ Be careful to credit authors and look for licenses on the presentations you use.
 - [GreyHat (Georgia Tech) presentations](http://greyhat.gatech.edu/archives/): Unknown -- ask individual authors
 
 - Some outlines here: https://gitlab.umich.edu/wolvsec/wolvsec-bootcamp
+
+How to copy the template for a new presentation
+=====
+
+- Don't copy the slides-source-dep directory.
+- Copy web/slides-source/ to your-category/slides-source/
+- There are a couple relative paths in the Makefile and main.tex.
+    - main.tex: `\graphicspath{ {./images/}{../../slides-source-dep/images/} }`
+    - Makefile: `TEXINPUTS=.:../../slides-source-dep/:$$TEXINPUTS`
+    - You only need to adjust the above two things if ../../slides-source-dep/ is not the correct path.
+
