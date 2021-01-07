@@ -42,10 +42,10 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Example RE Slide Deck]{\huge \textbf{Example RE Slide Deck:} \\ Some Subtitle - Code in ~C} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Introduction to Web Exploitation]{\huge \textbf{Introduction to Web Exploitation}} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Andrew Haberlandt} % Your name
-\date{\today} % Date, can be changed to a custom date
+\date{January 2021} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -74,81 +74,75 @@
     \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
-\section{An Example Section of the Presentation}
+\section{What \it{is} the 'Web' Category?}
 
+\subsection{A little about the Internet}
 \begin{frame}
-    \frametitle{An example first slide}
-    Some RE stuff:
+    \frametitle{HTTP}
     \begin{itemize}
-        \item A thing
-        \item Another thing
+        \item You want to go to http://google.com \ldots How?
+    \end{itemize}
+    \begin{enumerate}
+        \item DNS lookup for google.com $\rightarrow$ IP address
+        \item Open a TCP connection, send an HTTP request message
+        \item Parse HTTP response message
+        \item Parse and render the HTML in the response
+        \begin{itemize}
+            \item Sometimes this requires additional requests for external%
+            resources, which goes back to \#1
+        \end{itemize}
+    \end{enumerate}
+%    \begin{tikzpicture}
+%	\node (computer) [draw, double] at (0, 0) {Your Computer};
+%	\node (server) [draw, outer sep=40pt, right of=computer,circle] at (1, 0) {Server};
+%        \draw [->] (computer) edge (server) (server) edge (computer);
+%    \end{tikzpicture}
+\end{frame}
+
+
+\subsection{What does a 'vulnerability' look like in a Web application?}
+\begin{frame}
+    \frametitle{What \it{is} the 'Web' Category?}
+    Types of vulnerabilities to consider
+    \begin{itemize}
+        \item \textbf{Sensitive data exposure / information leakage:} Can you get%
+            the server to give you information you shouldn't have access to?
+        \item \textbf{Broken Access Control:} Can you modify data on the server
+            without proper authorization?
+        \item \textbf{Broken Authentication:} Can you login as another user or
+            compromise their password or session tokens?
+        \item \textbf{Manipulating Responses to other users:} Can you modify
+            resources provided to other users in a way that will directly
+            or indirectly give you access to their account?
     \end{itemize}
 \end{frame}
 
-\section{Another Example Section of the Presentation}
-
+\subsection{Why do we care?}
 \begin{frame}
-    \frametitle{An example of some stack frame stuff}
-    \begin{tikzpicture}[scale=.5,draw=lightred,text=invtext]
-        \tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
-        \stacktop{}
-        \startframe
-        \cell{char input[32]} \cellcom{RBP - 64}
-        \cell{int * \textit{c}} \cellcom{RBP - 32}
-        \cell{int \textit{b}} \cellcom{RBP - 24}
-        \cell{int \textit{a}} \cellcom{RBP - 16}
-        \cell{Stack Canary} \cellcom{RBP - 8}
-        \cell{Saved RBP} \cellptr{RBP, RSP}
-        \bcell{Saved RIP} \cellcom{RBP + 8}
-        \finishframe{function \\ {\tt foo ()}}
-        \startframe
-        \cell{Stack Canary} \cellcom{RBP - 8}
-        \cell{Saved RBP} \cellptr{RBP, RSP}
-        \bcell{Saved RIP} \cellcom{RBP + 8}
-        \finishframe{function \\ {\tt main ()}}
-        \stackbottom{}
-    \end{tikzpicture}
+    \frametitle{Why do we care?}
+    \begin{itemize}
+        \item There are lots of websites, with lots of data
+        \item APIs
+        \item Web technologies bleeding into desktop apps (Electron)
+        \item Bug bounties are largely web applications (e.g. HackerOne, Bugcrowd)
+    \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{How Could That Be Exploited?}
-    \begin{columns}[c]
+\section{Demo: Using Chrome 'Developer Tools' to Hack Stuff}
+\begin{frame}
+    \frametitle{Demo: Chrome Developer Tools} 
+\end{frame}
 
-        \column{.5\textwidth}
-        \textbf{Example Code} \\
-        \begin{minted}[gobble=12]{c}
-            int main(void) {
-                int authorized[2];
-                int username[32];
-                authorized[0] = 0x0
-                for (int i = 0;
-                i <= 32;
-                i++) {
-                    username[i] = 0x1
-                }
-            }
-        \end{minted}
+\subsection{HTML \& Inspect Element}
+\subsection{Javascript \& the Console}
+\subsection{Note about Frameworks}
+\subsection{The Debugger}
+\subsection{The 'Network' Tab}
+\subsection{Storage}
 
-        \column{.5\textwidth}
-        \hspace{-1.8cm} % negative horizontal space to align properly
-        \begin{tikzpicture}[scale=.5, draw=lightred, text=invtext]
-            \tiny
-            \stacktop{}
-            \startframe
-            \cell{Stack} \coordinate (stack) at (currentcell.east);
-            \cell{\ldots}
-            \cell{Heap}
-            \cell{Data}
-            \cell{Text}
-            \finishframe{\textbf{Program's \\ memory space}}
-            \drawstruct{(5,3)}
-            \structcell{int authorized[2]}
-            \structcell{int username[32]}
-            \structcell{\ldots} \coordinate(O1) at (currentcell.west);
-
-            \draw[->] (O1) .. controls (O1 |- stack) .. (stack);
-        \end{tikzpicture}
-    \end{columns}
+\section{Useful Tools and What They Do}
+\begin{frame}
+    \frametitle{Tools}
 \end{frame}
 
 \end{document}
