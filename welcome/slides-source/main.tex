@@ -42,10 +42,10 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Introduction to Web Exploitation]{\huge \textbf{Introduction to Web Exploitation}} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Welcome Back - Spring 2021]{\huge \textbf{Welcome Back - Spring 2021}} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{Andrew Haberlandt} % Your name
-\date{January 2021} % Date, can be changed to a custom date
+\author{Kyle Westhaus} % Your name
+\date{January 12 2021} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -67,94 +67,235 @@
 \end{frame}
 } % end background template
 
-\begin{frame}
-    \frametitle{Opportunities this week}
-    \begin{itemize}
-        \item{Women in Cybersecurity Meeting, Thursday @ 7pm}
-        \begin{itemize}
-            \item{$<$insert topic for this week$>$}
-            \item{$<$insert website/meeting link / mailing list$>$}
-        \end{itemize}
-        \item{Cyber Security Club Bootcamp CTF continues...}
-    \end{itemize}
-\end{frame}
+%\begin{frame}
+%    \frametitle{Opportunities this week}
+%    \begin{itemize}
+%        \item{Women in Cybersecurity Meeting, Thursday @ 7pm}
+%        \begin{itemize}
+%            \item{$<$insert topic for this week$>$}
+%            \item{$<$insert website/meeting link / mailing list$>$}
+%        \end{itemize}
+%        \item{Cyber Security Club Bootcamp CTF continues...}
+%    \end{itemize}
+%\end{frame}
 
 \setbeamercolor{background canvas}{bg=almostblack}
 \setbeamertemplate{section in toc}[square]
+%\begin{frame}
+%    \frametitle{Overview} % Table of contents slide, comment this block out to remove it
+%    \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+%\end{frame}
+
+\section{Reminders}
+
+\subsection{Officers}
 \begin{frame}
-    \frametitle{Overview} % Table of contents slide, comment this block out to remove it
-    \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+    \frametitle{Reminders - Officers}
+    \begin{itemize}
+        \item Kyle Westhaus, President
+        \item Yu-Shiang Jeng, Vice President
+        \item Andrew Haberlandt, Treasurer
+        \item Jackson Leverett, CTF Captain
+        \item Nick Kuhl, Outreach Coordinator
+        \item Andrew Migot, Research Coordinator
+    \end{itemize}
 \end{frame}
 
-\section{What \it{is} the 'Web' Category?}
 
-\subsection{A little about the Internet}
+\subsection{Communication/Links}
 \begin{frame}
-    \frametitle{HTTP}
+    \frametitle{Reminders - Communication/Links}
     \begin{itemize}
-        \item You want to go to http://google.com \ldots How?
+        \item \textbf{Attendance} (because the College of Engineering and OSU make us): http://attend.osucyber.club
+        \item \textbf{Mailing List:} http://mailinglist.osucyber.club
+        \item \textbf{Slack:} http://slack.osucyber.club
+        \item \textbf{Website:} http://osucyber.club
+        \item \textbf{Wiki:} http://wiki.osucyber.club
     \end{itemize}
-    \begin{enumerate}
-        \item DNS lookup for google.com $\rightarrow$ IP address
-        \item Open a TCP connection, send an HTTP request message
-        \item Parse HTTP response message
-        \item Parse and render the HTML in the response
+\end{frame}
+
+\section{Bootcamp Explanation}
+
+\subsection{Feedback Results}
+\begin{frame}
+    \frametitle{Feedback Results}
+    \begin{itemize}
+        \item CTF-specific survey, club survey
+        \item People wanted:
         \begin{itemize}
-            \item Sometimes this requires additional requests for external%
-            resources, which goes back to \#1
+            \item Better cohesion between meetings
+            \item More hands-on experiences
+            \item Preparation for the competition, not just the competition itself 
         \end{itemize}
-    \end{enumerate}
-%    \begin{tikzpicture}
-%	\node (computer) [draw, double] at (0, 0) {Your Computer};
-%	\node (server) [draw, outer sep=40pt, right of=computer,circle] at (1, 0) {Server};
-%        \draw [->] (computer) edge (server) (server) edge (computer);
-%    \end{tikzpicture}
-\end{frame}
-
-
-\subsection{What does a 'vulnerability' look like in a Web application?}
-\begin{frame}
-    \frametitle{What \it{is} the 'Web' Category?}
-    Types of vulnerabilities to consider
-    \begin{itemize}
-        \item \textbf{Sensitive data exposure / information leakage:} Can you get%
-            the server to give you information you shouldn't have access to?
-        \item \textbf{Broken Access Control:} Can you modify data on the server
-            without proper authorization?
-        \item \textbf{Broken Authentication:} Can you login as another user or
-            compromise their password or session tokens?
-        \item \textbf{Manipulating Responses to other users:} Can you modify
-            resources provided to other users in a way that will directly
-            or indirectly give you access to their account?
     \end{itemize}
 \end{frame}
 
-\subsection{Why do we care?}
+\subsection{Our Past CTFs}
 \begin{frame}
-    \frametitle{Why do we care?}
+    \frametitle{Our Past CTFs}
     \begin{itemize}
-        \item There are lots of websites, with lots of data
-        \item APIs
-        \item Web technologies bleeding into desktop apps (Electron)
-        \item Bug bounties are largely web applications (e.g. HackerOne, Bugcrowd)
+        \item Weekend-long
+        \item Range of challenge difficulty levels
+        \item \dots but little background info about how to prepare an environment and begin competing
     \end{itemize}
 \end{frame}
 
-\section{Demo: Using Chrome 'Developer Tools' to Hack Stuff}
+\subsection{The Plan}
 \begin{frame}
-    \frametitle{Demo: Chrome Developer Tools} 
+    \frametitle{The Plan}
+    \begin{itemize}
+        \item Floated idea of "Bootcamp" in winter break feedback - something other clubs have done before (Purdue)
+        \item Series of meetings dedicated to teaching those with minimal CTF experience how to be successful
+        \begin{itemize}
+            \item CTF background info
+            \item Technical knowledge for challenge categories
+            \item Wiki content about environment/tool setup
+            \item Challenges hosted all semester!
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 
-\subsection{HTML \& Inspect Element}
-\subsection{Javascript \& the Console}
-\subsection{Note about Frameworks}
-\subsection{The Debugger}
-\subsection{The 'Network' Tab}
-\subsection{Storage}
-
-\section{Useful Tools and What They Do}
+\subsection{This Semester}
 \begin{frame}
-    \frametitle{Tools}
+    \frametitle{This Semester} 
+    \begin{itemize}
+        \item Tonight: background on CTFs
+        \item Next week: more Bootcamp CTF specifics, start of actual bootcamp content
+        \item Rest of semester: more technical education content for challenge categories, you participate and use what you learn in meeting to complete more and more challenges and get prizes along the way!
+    \end{itemize}
+\end{frame}
+
+\section{CTF Background}
+
+\subsection{Capture the Flag}
+\begin{frame}
+    \frametitle{Capture the Flag}
+    \begin{itemize}
+        \item "flags" = short snippets of identifiable text. Examples:
+        \begin{itemize}
+            \item osuctf${$theflagincludesthestuffbeforethebraces$}$
+            \item osuctf${$l33tsp34k$}$
+        \end{itemize}
+        \item Not so much "find this text hidden somewhere on a computer", but rather "complete this technical challenge, the flag will be apparent at the end". Example:
+        \begin{itemize}
+            \item "This ciphertext is weakly encoded, decode it to get the plaintext flag"
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Why CTF?}
+\begin{frame}
+    \frametitle{Why CTF?}
+    Very popular for college clubs like our own because:
+    \begin{itemize}
+        \item Very effective way to learn
+        \item Very effective way to demonstrate skills to future employers
+        \item Fun competition
+    \end{itemize}
+\end{frame}
+
+\subsection{CTF Format}
+\begin{frame}
+    \frametitle{CTF Format}
+    \begin{itemize}
+        \item Mostly jeopardy
+        \begin{itemize}
+            \item Many problems, grouped by category, each has an associated number of points, available for a certain amount of time
+            \item Solve a challenge, submit flag, receive points
+            \item Team with most points at end of competition wins
+            \item Sometimes additional rules (e.g. only a few challenges unlocked at start, first team to solve gets to pick next unlocked challenge)
+        \end{itemize}
+        \item King of the hill
+        \item Red/blue team
+    \end{itemize}
+
+\end{frame}
+
+\subsection{CTF Interface}
+\begin{frame}
+    \frametitle{CTF Interface}
+    \begin{itemize}
+        \item Usually a website for registration, team creation, list of challenges, flag submission, scoreboard
+        \item Extremely common software to run this part of a CTF is CTFd
+    \end{itemize}
+\end{frame}
+
+\subsection{Interfacing with Challenges}
+\begin{frame}
+    \frametitle{Interfacing with Challenges}
+    \begin{itemize}
+        \item Downloadable file in challenge description
+        \begin{itemize}
+            \item Demo base64, open in text editor
+            \item Demo Somewhat Questionable LLC, open in browser
+            \item Demo speedrun3, view source, connect with netcat
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Need for CTF Tools}
+\begin{frame}
+    \frametitle{Need for CTF Tools}
+    When using any standard operating system, you can automatically do the following with challenges
+    \begin{itemize}
+        \item Downloadable
+        \begin{itemize}
+            \item Look at file in file explorer, maybe extract, open in text editor
+        \end{itemize}
+        \item Service URL
+        \begin{itemize}
+            \item Open in web browser, something like netcat
+        \end{itemize}
+    \end{itemize}
+    \dots but often times you need to do more! Solution:
+    \begin{itemize}
+        \item Use recommended tools (see the wiki!)
+        \item Do your own searching to find helpful tools
+        \item Write your own code
+    \end{itemize}
+\end{frame}
+
+\subsection{Tool Examples}
+\begin{frame}
+    \frametitle{Tool Examples}
+    \begin{itemize}
+        \item Web tool (cryptii)
+        \item Downloadable program with GUI (ghidra)
+        \item Downloadable terminal program (urlbuster)
+        \item Python library (pwntools)
+    \end{itemize}
+\end{frame}
+
+\subsection{How do I find CTFs?}
+\begin{frame}
+    \frametitle{How do I find CTFs?}
+    \begin{itemize}
+        \item We are hosting a semester-long one!
+        \item Other universities run them!
+        \item Conferences run them!
+        \item CTF teams host their own!
+    \end{itemize}
+    \dots and they are all on a list at https://ctftime.org/ (DEMO)
+\end{frame}
+
+\subsection{Other Content}
+\begin{frame}
+    \frametitle{Other Content}
+    \begin{itemize}
+        \item Livestreams/youtube videos of people solving CTFs
+        \item CTF challenge solution writeups (github or blogs)
+    \end{itemize}
+\end{frame}
+
+\section{Wrap Up}
+
+\begin{frame}
+    \frametitle{Wrap Up}
+    \begin{itemize}
+        \item Questions for now
+        \item Slack for questions later
+        \item Come back next week!
+    \end{itemize}
 \end{frame}
 
 \end{document}
