@@ -3,8 +3,9 @@ Presentations for Spring 2021 Bootcamp CTF
 
 | Date (tentative)  | Topic | Presenters
 |-------------------|-------|--------|
-| 1/19/21           | Intro to Cryptography | Yu-Shiang |
-| 2/2/21 (possibly earlier)   | Bootcamp CTF Kickoff + Web Exploitation 1 | Andrew + Jackson |
+| 1/19/21    | Bootcamp CTF Kickoff + Web Exploitation 1 | Andrew + Jackson ?|
+| 1/26/21           | Intro to Cryptography | Yu-Shiang |
+| 2/2/21 | TBA | TBA |
 | 2/9/21   | Introduction to Reverse Engineering | Kyle + Andrew |
 | 2/16/21   | Introduction to Binary Exploitation | Andrew + Yu-Shiang |
 | 2/23/21 (break)   | Office Hours | N/A |
