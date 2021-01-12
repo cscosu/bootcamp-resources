@@ -18,11 +18,11 @@ Template By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 
 ### Reminder - Communication/Links
 [comment]: <> (Drop attendance link in chat, tell them to fill out while going over rest of slide)
-- Attendance, http://attend.osucyber.club
-- Mailing list, sign up at http://mailinglist.osucyber.club
-- Slack, sign up at http://slack.osucyber.club
-- Website, http://osucyber.club
-- Wiki, http://wiki.osucyber.club
+- Attendance (because the College of Engineering and OSU make us): http://attend.osucyber.club
+- Mailing list: sign up at http://mailinglist.osucyber.club
+- Slack: sign up at http://slack.osucyber.club
+- Website: http://osucyber.club
+- Wiki: http://wiki.osucyber.club
 
 ## Bootcamp Explanation
 
@@ -54,7 +54,7 @@ Template By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 ## CTF Background
 
 ### Capture the Flag
-- "flags" -> short snippets of identifiable text (e.g. BuckeyeCTF{theflagincludesthestuffbeforethebraces} or BuckeyeCTF{l33tsp34k})
+- "flags" -> short snippets of identifiable text (e.g. osuctf{theflagincludesthestuffbeforethebraces} or osuctf{l33tsp34k})
 - not so much "find this text hidden somewhere on a computer", but rather "complete this technical challenge, the flag will be apparent at the end" (e.g. "this ciphertext is weakly encoded, decode it to get the plaintext flag")
 
 ### Why CTF?
@@ -78,24 +78,25 @@ Template By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 - screenshot
 
 ### Interacting with Challenges
+[comment]: <> (Mention that we will teach people to solve these)
 - downloadable file in challenge description
-    - e.g. here's a file image of a USB stick, the flag was in a deleted file, recover it!
+    - demo base64, open in text editor
 - URL for service to attack
-    - e.g. this website is vulnerable, the flag is on a page that you're not supposed to be able to see (but you can)
-    - e.g. here's the source code for the service running at this address, find the vulnerability and exploit it display the contents of the flag file
+    - demo Somewhat Questionable LLC, open in browser
+    - demo speedrun3, view source, connect with netcat
 
 ### Need for CTF Tools
 - when using any standard operating system, you can automatically do the following with challenges
 - downloadable
     - look at file in file explorer, maybe extract, open in text editor
 - service URL
-    - open in web browser
+    - open in web browser, something like netcat
 - but often times you need to do more! solution:
     - use recommended tools (see the wiki!)
     - do your own searching to find helpful tools
     - write your own code
 
-### Tool Examples (add screenshots)
+### Tool Examples (add screenshots or demo)
 - web tool (cryptii)
 - downloadable program with GUI (ghidra)
 - downloadable terminal program (urlbuster)
@@ -106,7 +107,7 @@ Template By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 - other universities run them!
 - conferences run them!
 - CTF teams host their own!
-- all on a list at https://ctftime.org/
+- all on a list at https://ctftime.org/ (DEMO)
 
 ### Other Content
 - livestreams/youtube videos of people solving CTFs
