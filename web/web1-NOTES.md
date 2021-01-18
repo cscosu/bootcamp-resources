@@ -4,6 +4,11 @@ By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 
 Notes and slides adapted from PHSC138 (Purdue, b01lers CTF team): [Link to Original](https://github.com/b01lers/bootcamp-training-2020/tree/master/web)
 
+### Categories
+
+- Reversing: Usually you hope that by doing the things listed on the slidek you'll uncover a way to cause unintended behavior
+-
+
 ### Ethics
 - Mention something about how they should not hack something without
 permission -- it's illegal to break into a computer system without consent.

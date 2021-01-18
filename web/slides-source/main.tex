@@ -45,7 +45,7 @@
 \title[Introduction to Web Exploitation]{\huge \textbf{Introduction to Web Exploitation}} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Andrew Haberlandt} % Your name
-\date{January 2021} % Date, can be changed to a custom date
+\date{January 19, 2021} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -61,9 +61,13 @@
 
 \begin{frame}
     \titlepage % Print the title page as the first slide
-    \begin{tikzpicture}
-        \node[anchor=south west] at (20, 20) {\includegraphics[width=0.15\paperwidth]{logo.png}};
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-2cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.15\paperwidth]{logo.png}};
     \end{tikzpicture}
+    \begin{itemize}
+        \item \textbf{Don't forget to start recording}
+        \item Slides are on https://wiki.osucyber.club
+    \end{itemize}
 \end{frame}
 } % end background template
 
@@ -86,11 +90,112 @@
     \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
+\section{About the Bootcamp CTF}
+
+\subsection{What is 'Capture The Flag' and why you should give it a try}
+
+\begin{frame}
+    \frametitle{What is Capture-The-Flag}
+    \begin{itemize}
+        \item \textbf{Essentially a hacking competition: } Each challenge contains a 'flag', which is just a secret string. For example: $ \texttt{osuctf\{th15\_15\_n0t\_a\_r34l\_flag\}} $
+        \item \textbf{All of our flags are formatted like $ \texttt{osuctf\{\dots\}} $}
+        \begin{itemize}
+            \item \textbf{Sometimes, we'll give you a file: } You'll might have to decrypt some data, reverse engineer an executable, or analyze network traffic
+            \item \textbf{Sometimes, we'll give you an IP and port: } We have set up over 20 internet-accessible services for you to hack: these include websites and APIs, as well as embedded device applications (eg. like on IoT devices)
+        \end{itemize} 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{"CTF Scoreboard"}
+    \begin{itemize}
+        \item \textbf{Each challenge has an assigned point value, depending on difficulty}
+        \item \textbf{Solve in any order}
+    \end{itemize}
+    \begin{tikzpicture}
+        \node[] (shirt1) {\includegraphics[width=0.50\paperwidth]{scoreboard.png}};
+    \end{tikzpicture}
+    
+\end{frame}
+
+\subsection{Categories, Rules, Write-Ups, Prizes, Discord}
+
+\begin{frame}
+    \frametitle{Categories (our definitions)}
+    \begin{itemize}
+        \item \textbf{Web: } Vulnerabilities in web applications such as SQL injection, command injection, cross-site scripting (XSS), logic bugs, and more.
+        \item \textbf{Reversing: } Figure out how a program works, without source code. (includes mobile applications, web applications, IoT firmware, ...).
+        \item \textbf{Binary Exploitation: } Identifying and exploiting memory corruption and logic bugs in native executable programs. This includes some analysis of machine code and often C source code.
+        \item \textbf{Crypto: } Learn about implementation flaws in encryption schemes that allow you to decrypt encrypted data sent between two parties
+        \item \textbf{Forensics: } Recovering useful information from traffic captures, full disk images, a variety of common file formats (including data hidden in images). Often includes deleted / covertly recorded data.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Why should you care?}
+    \begin{itemize}
+        \item \textbf{You want to write secure software. }Someday, you'll probably write the same kind of applications we've set up for you to hack. You'll be able to recognize a variety of vulnerabiities and avoid introducing them in your code.
+        \item \textbf{Breaking other people's stuff can be fun and profitable. }Most large companies have started \textit{bug bounty} programs, which pay anywhere from \$100 - \$1,000,000 for vulnerabilites that impact the security of their systems and users.
+        \begin{itemize}
+            \item HackerOne and Bugcrowd are two common platforms for corporate bug bounties. Make sure you follow all the rules for any programs you participate in.
+        \end{itemize}
+        \item \textbf{Cybersecurity is a hot CS career field. }The skills you learn here are highly valueble to big tech, big defense, big finance, etc.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{About Cyber Security Club Bootcamp}
+    \begin{itemize}
+        \item \textbf{Bootcamp CTF: } Runs all semester. Complete challenges online.
+        \item \textbf{Bootcamp Series Talks: } Will continue for... unknown period of time
+        \begin{itemize}
+            \item During Cyber Security Club meetings, Tuesdays @ 7pm, http://zoom.osucyber.club
+            \item Talks are recorded and posted on the meeting schedule on https://wiki.osucyber.club
+            \item Each talk will conclude with a list of recommended challenges
+            \item \textbf{Next Week:} Intro to Cryptography
+            \item Most talks are standalone, exceptions will be announced and listed on wiki
+            \item Some topics will (eventually) have a 'Part 2', Web Exploitation is one of them
+        \end{itemize}
+        \item \textbf{How to get Started: https://go.osu.edu/CyberClubBootcamp}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Rules}
+    \begin{enumerate}
+        \item \textbf{Don't spoil the challenges for others.}
+        \begin{itemize}
+            \item You are free to discuss approaches to the challenges, tools you used, important concepts, and small hints on our Discord
+            \item Please do not give flags or solution guides/scripts to other participants.
+        \end{itemize}
+        \item \textbf{Don't try to hack the CTF scoreboard (CTFd) or the Discord. }
+        \item \textbf{Be nice on the Discord.}
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Prizes}
+    \begin{itemize}
+        \item{Prizes (while supplies last)}
+        \begin{itemize}
+            \item 500pts: Sticker (100 available)
+            \item 2000pts: T-shirt (30 available)
+        \end{itemize}
+        \item{Pick up on-campus starting in Feb, or if you are remote you can wait until AU21}
+    \end{itemize}
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-4cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.3\paperwidth]{shirt1.png}};
+        \node[left = of shirt1] (shirt2) {\includegraphics[width=0.3\paperwidth]{shirt2.png}};
+        \node[anchor=north east, yshift=-4cm, xshift=-2cm] (sticker) at (current page.north east) {\includegraphics[width=0.3\paperwidth]{sticker.png}};
+    \end{tikzpicture}
+\end{frame}
+
+
 \section{What \it{is} the 'Web' Category?}
 
 \subsection{A little about the Internet}
 \begin{frame}
-    \frametitle{HTTP}
+    \frametitle{About the web: HTTP}
     \begin{itemize}
         \item You want to go to http://google.com \ldots How?
     \end{itemize}
@@ -100,15 +205,16 @@
         \item Parse HTTP response message
         \item Parse and render the HTML in the response
         \begin{itemize}
-            \item Sometimes this requires additional requests for external%
+            \item Sometimes this requires additional requests for external %
             resources, which goes back to \#1
         \end{itemize}
     \end{enumerate}
-%    \begin{tikzpicture}
-%	\node (computer) [draw, double] at (0, 0) {Your Computer};
-%	\node (server) [draw, outer sep=40pt, right of=computer,circle] at (1, 0) {Server};
-%        \draw [->] (computer) edge (server) (server) edge (computer);
-%    \end{tikzpicture}
+   \begin{tikzpicture}[node distance=0.5cm and 3.5cm, box/.style={rectangle, rounded corners, draw, very thick, inner sep=10pt}]
+	\node (computer) [box] {Your Computer};
+	\node (server) [right=6cm of computer,box] {Server};
+    \path [-Stealth, thick] ([yshift=0.5cm] computer.east) edge node[above] {GET /search?q=cyber HTTP/1.1\dots} ([yshift=0.5cm] server.west)
+       ([yshift=-0.5cm] server.west) edge node[below] {HTTP/1.1 200 OK\dots} ([yshift=-0.5cm] computer.east);
+   \end{tikzpicture}
 \end{frame}
 
 
@@ -117,7 +223,7 @@
     \frametitle{What \it{is} the 'Web' Category?}
     Types of vulnerabilities to consider
     \begin{itemize}
-        \item \textbf{Sensitive data exposure / information leakage:} Can you get%
+        \item \textbf{Sensitive data exposure / information leakage:} Can you get %
             the server to give you information you shouldn't have access to?
         \item \textbf{Broken Access Control:} Can you modify data on the server
             without proper authorization?
@@ -129,7 +235,7 @@
     \end{itemize}
 \end{frame}
 
-\subsection{Why do we care?}
+\subsection{Why do we care about Web?}
 \begin{frame}
     \frametitle{Why do we care?}
     \begin{itemize}
