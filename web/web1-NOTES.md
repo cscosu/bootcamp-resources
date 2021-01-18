@@ -4,15 +4,16 @@ By: Andrew Haberlandt, Cyber Security Club @ Ohio State
 
 Notes and slides adapted from PHSC138 (Purdue, b01lers CTF team): [Link to Original](https://github.com/b01lers/bootcamp-training-2020/tree/master/web)
 
+** ... just read off the slides until you get to categories **
+
 ### Categories
 
-- Reversing: Usually you hope that by doing the things listed on the slidek you'll uncover a way to cause unintended behavior
--
+- Reversing: Usually you hope that by doing the things listed on the slide you'll uncover a way to cause unintended behavior
+
+** ... back to reading off the slides until you get to ethics **
 
 ### Ethics
-- Mention something about how they should not hack something without
-permission -- it's illegal to break into a computer system without consent.
-- Don't try to hack a university website, that's against student code of conduct (quote the code on a slide?)
+- Add that if you work for a defense contractor, you won't be disclosing or getting permission of the vendor, LOL
 
 ### What *is* the 'Web' category?
 
