@@ -212,9 +212,20 @@
    \begin{tikzpicture}[node distance=0.5cm and 3.5cm, box/.style={rectangle, rounded corners, draw, very thick, inner sep=10pt}]
 	\node (computer) [box] {Your Computer};
 	\node (server) [right=6cm of computer,box] {Server};
-    \path [-Stealth, thick] ([yshift=0.5cm] computer.east) edge node[above] {GET /search?q=cyber HTTP/1.1\dots} ([yshift=0.5cm] server.west)
-       ([yshift=-0.5cm] server.west) edge node[below] {HTTP/1.1 200 OK\dots} ([yshift=-0.5cm] computer.east);
+    \path [-Stealth, thick] ([yshift=0.5cm] computer.east) edge[bend left=15] node[above] {GET /search?q=cyber HTTP/1.1\dots} ([yshift=0.5cm] server.west)
+       ([yshift=-0.5cm] server.west) edge[bend left=15] node[below] {HTTP/1.1 200 OK\dots} ([yshift=-0.5cm] computer.east);
    \end{tikzpicture}
+\end{frame}
+
+\subsection{Why do we care about Web?}
+\begin{frame}
+    \frametitle{Why do we care?}
+    \begin{itemize}
+        \item There are lots of websites, with lots of data
+        \item APIs
+        \item Web technologies bleeding into desktop apps (Electron)
+        \item Bug bounties are largely web applications (e.g. HackerOne, Bugcrowd)
+    \end{itemize}
 \end{frame}
 
 
@@ -245,7 +256,7 @@
         \item \textbf{If you break into a system for which you are not authorized, you will probably get caught.}
         \begin{itemize}
             \item Advice: Don't touch anything at the university. "Use only those computing resources they are authorized to use and use them only in the manner and to
-        the extent authorized" - University Policy
+        the extent authorized" (University Policy) - they will find you and come after you
             \item Computer Fraud and Abuse Act - many years in prison
             \item Won't be able to get a security clearance
         \end{itemize}
@@ -254,17 +265,6 @@
             \item Exception: Bug bounties that make you sign an NDA -- you can never disclose
             \item Exception: Most researchers give the vendor 90 days to fix (see Google Project Zero), and then publicly disclose even if not fixed
         \end{itemize}
-    \end{itemize}
-\end{frame}
-
-\subsection{Why do we care about Web?}
-\begin{frame}
-    \frametitle{Why do we care?}
-    \begin{itemize}
-        \item There are lots of websites, with lots of data
-        \item APIs
-        \item Web technologies bleeding into desktop apps (Electron)
-        \item Bug bounties are largely web applications (e.g. HackerOne, Bugcrowd)
     \end{itemize}
 \end{frame}
 
@@ -283,6 +283,38 @@
 \section{Useful Tools and What They Do}
 \begin{frame}
     \frametitle{Tools}
+    \begin{itemize}
+        \item{Chrome Developer Tools}
+        \item{Postman, Burpsuite, other HTTP clients}
+        \item{Python 'requests' library}
+        \item{\textbf{Man-in-the-middle proxies:} mitmproxy, Charles proxy}
+        \item{\textbf{SQL injection tools:} sqlmap}
+        \item{dirbuster, and other \textbf{wordlist-based scanning tools}}
+        \item{w3af, and other \textbf{automated vulnerability scanners}}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Recommended Challenges}
+    \begin{itemize}
+        \item{\textbf{25 pt Web:} Security Questions}
+        \item{\textbf{35 pt Web:} scrape}
+        \item{\textbf{50 pt Web:} Auth Bot 2}
+        \item{\textbf{60 pt Web:} New Beginnings}
+        \item{\textbf{70 pt Web:} Dreese Lab Gift Shop}
+        \item{\textbf{75 pt Web:} flagbin 1}
+        \begin{itemize}
+            \item{Hint: Maybe they were worried about SEO?}
+        \end{itemize}
+        \item{\textbf{Challenge: 150 pt Web}: Mini Calculator}
+        \item{SQL Injection Challenges}
+        \begin{itemize}
+            \item{\textbf{25 pt Web:} Somewhat Questionable LLC}
+            \item{\textbf{50 pt Web:} Superb Quality cLass scheduling}
+        \end{itemize}
+        \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
+    \end{itemize}
 \end{frame}
 
 \end{document}

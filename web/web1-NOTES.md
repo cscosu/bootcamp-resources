@@ -48,6 +48,19 @@ Switch screen share to Chrome
 
 ----
 
+### Sending an HTTP Request
+- You can simply open a connection and type:
+
+    GET / HTTP/1.1
+
+    # HTTP
+    nc osucyber.club 80
+    # or HTTPS
+    openssl s_client -connect osucyber.club:443
+
+- Need `Host` header for osucyber.club ... can have more than one domain per server
+- List of common HTTP headers - there's lots of things you can (try) to do. It's really a pretty complex standard.
+
 ### HTML
 - HTML stands for Hypertext Markup Language and pretty much all web pages on the internet use HTML to show users content.
 - **Make an html file in your favorite editor** `test.html`
@@ -148,6 +161,7 @@ function say_hi(){
 
 ### HTTP methods and Tools
 - postman, HTTP client apps, Burpsuite
+- HTTP proxies like mitmproxy or Charles for intercepting traffic from a variety of devices (not really relevant for CTF)
 - One note on http methods: they are supposed to do what the 'standard' says, but the server can interpret the request however it wants.
     - The most common example is when you make a request to google.com. You aren't explicitly requesting an html file, but the server sends one anyway.
 - Encodings: Sometimes data is sent encoded in a particular format (see in tool). Show some common encodings (is there any commmon site that sends stuff in base64? idk)
