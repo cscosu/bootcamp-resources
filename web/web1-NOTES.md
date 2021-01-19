@@ -12,6 +12,10 @@ Notes and slides adapted from PHSC138 (Purdue, b01lers CTF team): [Link to Origi
 
 ** ... back to reading off the slides until you get to ethics **
 
+### About CSC Bootcamp
+
+- Some topics will (eventually) have a 'Part 2', Web Exploitation is one of them
+
 ### Ethics
 - Add that if you work for a defense contractor, you won't be disclosing or getting permission of the vendor, LOL
 
