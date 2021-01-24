@@ -10,10 +10,10 @@ By: Yu-Shiang Jeng, Cyber Security Club @ Ohio State
 
 ## Encoding
 
-- Data is represented as a sequence of 1's and 0's.
-- Each binary digit is a bit.
+- Data is represented as a sequence of 1's and 0's
+- We call each binary digit a bit
 
-- Usually we group them into 8 known as bytes
+- Usually we group them into 8: known as bytes
 - The value of a byte ranges from 0 to 255
 
 - Representing integers in binary is intuitive. Just convert to base 10 to see
@@ -44,7 +44,7 @@ Challenge:
   - Base64 decode to get part of the flag
 
 Challenge:
-  - Convert a big integer to the final part of the flag
+  - Convert a big integer to get the final part of the flag
   - Can be done in vanilla Python, but it's ugly:
     - `bytes.fromhex(hex(m)[2:])`
   - Better to use PyCryptodome `long_to_bytes`
