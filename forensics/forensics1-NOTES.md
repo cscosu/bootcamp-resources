@@ -8,7 +8,9 @@ References:
 [Trail of Bits CTF Field Guide - Forensics](https://trailofbits.github.io/ctf/forensics/)
 [CTF101 - Forensics](https://ctf101.org/forensics/overview/)
 
-## What is Forensics?
+## Announcements (7:05)
+
+## What is Forensics? (7:10)
 
 - Any time you're trying to pull extra information out of static data files (except executables and crypto)
 - Some common subcategories:
@@ -27,7 +29,7 @@ References:
     - "One would typically not bust a criminal case by carefully reassembling a corrupted PNG file, revealing a photo of a QR code that decodes to a password for a zip archive containing an NES rom that when played will output the confession." - Trail of Bits CTF Field Guide
 - However, still good at teaching you where to search for clues on a computer and exposing you to lots of different terms of technologies that you may need in the future
 
-## Just Bytes
+## Just Bytes (7:15)
 
 - When your computer opens a PDF, it shows you a document.
 - When your computer opens a JPEG, it shows you an image.
@@ -39,7 +41,7 @@ References:
 - Open PDF and JPEG normally, then in hex editor
 - So how do does image viewer know how to turn bytes from file into image?
 
-## Important Concept: File Format
+## Important Concept: File Format (7:20)
 
 - "format" - agreed upon pattern of bytes. Programs write data in these formats so that the next program to open the file knows how to read it and get the data it represents
 - All JPEG images conform to a specification that says how the bytes of the file represent pixels of colors that can be displayed
@@ -54,7 +56,7 @@ References:
 - So, if you want to ID a file, you can open it in a hex editor and see if you recognize any magic bytes, but that's not very efficient
     - Solution: `file` is a command on Linux which already has a database of magic bytes for a bunch of different file formats and will automatically check those and let you know if any match. So if we give you a file with a random extension, you can probably figure out what kind of file format it is quickly using `file`!
 
-## Common File Formats
+## Common File Formats (7:25)
 - Zip, TAR, Gzip, 7zip, RAR -> archive file, can be unzipped
 - Jpeg, GIF, BMP, PNG, TIF -> image files, can be viewed
 - PCap, PCapNG -> packet captures, we'll be talking about these later
@@ -85,7 +87,7 @@ References:
 - exiftool is file format aware
 - Many other ways to hide data in images (steganography) but we won't cover those today
 
-## Network Forensics
+## Network Forensics (7:35)
 
 ## Networking, a Simplified View
 
@@ -109,7 +111,7 @@ References:
         - DNS -> convert human-readable address ("google.com") to computer address (172.217.4.206)
         - FTP -> file transfer protocol
 
-## Demo: Wireshark
+## Demo: Wireshark (7:40)
 
 - Wireshark can both capture packets and analyze them
 - netcat
@@ -117,7 +119,7 @@ References:
 - HTTPS example.com
 - DNS from browser to NEW vs old website
 
-## Recommended Challenges (Points)
+## Recommended Challenges (Points) (7:50)
 
 - General forensics
     - revgrep (5)
@@ -133,6 +135,9 @@ References:
 - Disk/filesystem images
 - Memory dumps
 - Steganography
+
+
+## Questions (7:55)
 
 -------------------------------------------------------------------------------
 ## WIP
