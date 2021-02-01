@@ -13,11 +13,11 @@ References:
 - Any time you're trying to pull extra information out of static data files (except executables and crypto)
 - Some common subcategories:
     - Image/audio/video files (including steganography)
+    - Network packet captures
     - Archive files
     - Disk/filesystem images
-    - Network packet captures
     - Memory dumps
-    - Weird file formats
+    - ...and many more
 
 ## In the Real World
 
@@ -70,30 +70,72 @@ References:
 - Research the file format a bit. Are there any non-data sections (like comments, version strings, etc) where you could easily hide a flag without it normally showing up?
 - Try to find tools that help you analyze or inspect that file format instead of just viewing it
 
-## Image Forensics
+## Demo: `strings`
 
-## Packet Captures (if time?)
+- quickly search for long sequences of ASCII characters -> possibly hidden information, but not file format aware
 
+## Multimedia Forensics Example
 
+- JPEG images store metadata in "EXIF tags"
+    - A perfect non-data section to hide info like flags in!
+
+## Demo: ExifTool
+
+- Open image normally and in hex editor and find nothing, then find base64 flag with exiftool
+- exiftool is file format aware
+- Many other ways to hide data in images (steganography) but we won't cover those today
+
+## Network Forensics
+
+## Networking, a Simplified View
+
+- Computers send data in chunks called packets
+- Each computer has an address that you can put in a sent packet to make sure they receive it
+- Can use tools to capture the packets that your computer is sending and analyze them
+
+## Protocols
+
+- The networking equivalent of file formats
+- Describe who should send packets when, and what data will be present in the packets
+- Protocol "layers" - some packets contain packets of other protocols
+
+## Common Protocols
+
+- IP -> address for each computer, contains:
+    - TCP or UDP -> address (port) for each program on a computer, contains:
+        - SSL/TLS -> encrypted tunnel
+        - HTTP(S) -> web browsing
+        - SSH, telnet (insecure!) -> remote administration
+        - DNS -> convert human-readable address ("google.com") to computer address (172.217.4.206)
+        - FTP -> file transfer protocol
+
+## Demo: Wireshark
+
+- Wireshark can both capture packets and analyze them
+- netcat
+- HTTP example.com
+- HTTPS example.com
+- DNS from browser to NEW vs old website
+
+## Recommended Challenges (Points)
+
+- General forensics
+    - revgrep (5)
+    - MyPlanForWorldDomination (6)
+- Network forensics
+    - JustAPacket (10)
+    - Exfiltration (20)
+    - TLS (75)
+
+## Future Topics
+
+- Archive files/file carving
+- Disk/filesystem images
+- Memory dumps
+- Steganography
 
 -------------------------------------------------------------------------------
 ## WIP
 
-also `strings` for when file fails
-chals: removed/false file extension
+chals: removed/false file extension, corrupted, rest of network captures
 
-once have magic bytes, how do programs know to open file? follow the instructions - "specifications"
-(demo) some file specification
-chals: corrupted
-
-
-pick one (multimedia and stego? mentioning binwalk is a must, but we have a lot of wireshark challenges already...) then rest future sessions?
-- common file formats
-- file carving (or just quickly mention?)
-- archive files
-- multimedia (stego)
-- filesystem/disk image
-- network capture
-- memory dump
-
-## 
