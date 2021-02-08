@@ -124,3 +124,5 @@ essentially any native program regardless of what language it was written in. (c
 - uhhhhh
 - angr?
 - fuzzing?
+
+## SET UP YOUR VM FOR NEXT WEEK
