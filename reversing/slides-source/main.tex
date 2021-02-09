@@ -131,12 +131,10 @@
         \item{Programs can interact with memory as a 'sea of byte-addressable bits'}
     \end{itemize}
     \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[endianness = big]{0-15}\\
-        \bytefieldsetup{boxformatting=\baselinealign}%
-        \begin{leftwordgroup}{BR}
-            \bitboxes*{1}{0000}
-            \bitboxes*{1}{nzp}
-            \bitbox{9}{PCoffset9}
+        \bitheader[endianness = little]{0-15}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		\bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
         \end{leftwordgroup}\\[1ex]
     \end{bytefield}
 \end{frame}
@@ -146,13 +144,7 @@
 \begin{frame}
     \frametitle{Tools}
     \begin{itemize}
-        \item{Chrome Developer Tools}
-        \item{Postman, Burpsuite, other HTTP clients}
-        \item{Python 'requests' library}
-        \item{\textbf{Man-in-the-middle proxies:} mitmproxy, Charles proxy}
-        \item{\textbf{SQL injection tools:} sqlmap}
-        \item{dirbuster, and other \textbf{wordlist-based scanning tools}}
-        \item{w3af, and other \textbf{automated vulnerability scanners}}
+        \item{tbd}
     \end{itemize}
 \end{frame}
 
@@ -160,21 +152,6 @@
 \begin{frame}
     \frametitle{Recommended Challenges}
     \begin{itemize}
-        \item{\textbf{25 pt Web:} Security Questions -- \textbf{Highly Recommended}}
-        \item{\textbf{35 pt Web:} scrape}
-        \item{\textbf{50 pt Web:} Auth Bot 2}
-        \item{\textbf{60 pt Web:} New Beginnings}
-        \item{\textbf{70 pt Web:} Dreese Lab Gift Shop -- \textbf{Highly Recommended}}
-        \item{\textbf{75 pt Web:} flagbin 1}
-        \begin{itemize}
-            \item{Hint: Maybe they were worried about SEO?}
-        \end{itemize}
-        \item{\textbf{Challenge: 150 pt Web}: Mini Calculator}
-        \item{SQL Injection Challenges}
-        \begin{itemize}
-            \item{\textbf{25 pt Web:} Somewhat Questionable LLC}
-            \item{\textbf{50 pt Web:} Superb Quality cLass scheduling}
-        \end{itemize}
         \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
     \end{itemize}
 \end{frame}
@@ -182,10 +159,7 @@
 \begin{frame}
     \frametitle{Possible Future Topics}
     \begin{itemize}
-        \item{\textbf{Injection: }SQL, command, and more}
-        \item{\textbf{XSS (Cross Site Scripting)}}
-        \item{\textbf{CSRF (Cross Site Request Forgery)} and the Same Origin Policy}
-        \item{\textbf{Mobile App Security Research w/ HTTP(S) Interception Proxies}}
+	\item{\textbf{topics}}
     \end{itemize}
 \end{frame}
 
