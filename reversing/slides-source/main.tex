@@ -140,6 +140,44 @@
 \end{frame}
 
 
+\begin{frame}
+    \frametitle{About computers}
+    \framesubtitle{CSE 3421 in 3 minutes}
+    \begin{itemize}
+	\item{"Get me 8 bytes at address 0x42, store it in register 1"}
+        \item{"Add register 1 to register 2, put the result in register 1"}
+        \item{"Get me 8 bytes using address in register 1, put the result in register 1}
+        \item{"Move the data from register 1 into register 2"}
+	\item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
+    \end{itemize}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[endianness = little]{0-15}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		\bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Machine code is everything}
+    \framesubtitle{or, everything is machine code}
+    \begin{itemize}
+	    \item{\textbf{Native applications (compiled code):} Compile to machine code, distribute to users, then they run it}
+        \item{\textbf{JIT-ed languages:} You write Javascript, the browser 'just-in-time' translates your Javascript into machine code, and then runs it.}
+	\item{\textbf{Interpreted languages:} An interpreter directly runs the source code, line by line, implementing all the behaviors of the language. e.g. CPython (the most common Python implementation)}
+	\item{\textbf{Often, a combination of the above...} The line is blurry.}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-5cm, xshift=-4cm] (shirt1) at (current page.south east) {\includegraphics[width=0.5\paperwidth]{turtle.png}};
+    \end{tikzpicture}
+
+\end{frame}
+
 \section{Useful Tools and What They Do}
 \begin{frame}
     \frametitle{Tools}
