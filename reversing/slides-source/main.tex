@@ -35,6 +35,13 @@
 
 \newcommand{\hash}[1]{{\ttfamily\seqsplit{#1}}}
 
+\newlength{\bitlabelwidth}
+\newcommand{\rotbitheader}[1]{%
+  \tiny
+  \settowidth{\bitlabelwidth}{\quad 9999}%
+  \rotatebox[origin=B]{60}{\makebox[\bitlabelwidth][r]{#1}}%
+}
+
 \newenvironment{zerohyphen}
  {\global\chardef\savedhyphenchar=\hyphenchar\font % save the current hyphenchar
   \lefthyphenmin=1 \righthyphenmin=1 % no limits on hyphenation
@@ -130,11 +137,12 @@
         \item{Programmers should assume instructions run \textbf{'serially'} (one at a time, in sequence)}
         \item{Programs can interact with memory as a 'sea of byte-addressable bits'}
     \end{itemize}
+    \vspace{5mm}
     \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[endianness = little]{0-15}\\
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
         \bytefieldsetup{}%
         \begin{leftwordgroup}{Memory}
-		\bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
+            \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
         \end{leftwordgroup}\\[1ex]
     \end{bytefield}
 \end{frame}
@@ -150,8 +158,9 @@
         \item{"Move the data from register 1 into register 2"}
 	\item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
     \end{itemize}
+    \vspace{5mm}
     \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[endianness = little]{0-15}\\
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
         \bytefieldsetup{}%
         \begin{leftwordgroup}{Memory}
 		\bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
@@ -165,7 +174,7 @@
     \begin{itemize}
 	    \item{\textbf{Native applications (compiled code):} Compile to machine code, distribute to users, then they run it}
         \item{\textbf{JIT-ed languages:} You write Javascript, the browser 'just-in-time' translates your Javascript into machine code, and then runs it.}
-	\item{\textbf{Interpreted languages:} An interpreter directly runs the source code, line by line, implementing all the behaviors of the language. e.g. CPython (the most common Python implementation)}
+	\item{\textbf{Interpreted languages:} An interpreter (which is a native application) directly runs the source code, line by line, implementing all the behaviors of the language. e.g. CPython (the most common Python implementation)}
 	\item{\textbf{Often, a combination of the above...} The line is blurry.}
     \end{itemize}
 
@@ -177,6 +186,110 @@
     \end{tikzpicture}
 
 \end{frame}
+
+\subsection{What does a reversing problem look like? What's missing?}
+\begin{frame}
+    \frametitle{What does a reversing problem look like?}
+    \begin{itemize}
+	    \item{\textbf{Native applications (compiled code):} You get machine code (usually in the form of an executable or shared library). You can use a \textbf{disassembler} to look at the instructions. A \textbf{decompiler} attempts to create C-like code from the machine code.}
+        \item{\textbf{Java applications: } You'll usually get a .jar (or .apk if Android) containing 'Java bytecode', which can usually be decompiled back to nearly-runnable but hard-to-read Java}
+	\item{\textbf{Web applications: } You can always view Javascript (+ HTML + CSS) in the browser (see the web talk). But minification/obfuscation tools can make it hard to understand.}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Demo 1}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{What's usually missing in a reverse engineering problem?}
+    \framesubtitle{}
+    \begin{itemize}
+        \item{No useful variable names}
+        \item{No documentation}
+        \item{Obfuscated control flow (compilers can make all kinds of optimizing decisiions)}
+        \item{But... we usually still have strings!}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Minified JS Example}
+    \framesubtitle{}
+    % \column{.5\textwidth}
+    \textbf{Pretty-Printed from Carmen} \\
+    \begin{minted}[gobble=4]{javascript}
+    function yn() {
+      const e = Ba.t("This assignment is dropped and will not be considered in the total calculation")
+      const t = s()("#only_consider_graded_assignments").attr("checked")
+      const a = t ? "current" : "final"
+      const n = ENV.group_weighting_scheme
+      const o = !ENV.exclude_total
+      const r = _n()
+      s()(".dropped").attr("aria-label", "")
+      s()(".dropped").attr("title", "")
+      s()(".student_assignment").find(".points_possible").attr("aria-label", "")
+      l.a.forEach(r.assignmentGroups, e=>{
+          l.a.forEach(e[a].submissions, e=>{
+              s()("#submission_" + e.submission.assignment_id).toggleClass("dropped", !!e.drop)
+          })
+      })
+      s()(".dropped").attr("aria-label", e)
+      s()(".dropped").attr("title", e)
+      o && gn(r, a, n)
+    }
+    \end{minted}
+
+%\column{.5\textwidth} 
+\end{frame}
+
+\subsection{General Techniques for Reversing}
+\begin{frame}
+    \frametitle{Techniques for Reversing}
+    \begin{itemize}
+        \item{Static Analysis}
+        \begin{itemize}
+          \item{Stare at what you have, make sense of it piece-by-piece}
+          \item{Use static analysis tools (decompilers, libraries such as \texttt{angr}, ...)}
+        \end{itemize}
+        \item{Dynamic Analysis}
+        \begin{itemize}
+          \item{Run it and see what happens; Modify inputs to see how behavior changes}
+          \item{Debuggers, and other runtime inspection tools (Run it, pause it, poke around)}
+          \begin{itemize}
+            \item{\textbf{Web: }Set breakpoints in chrome, look at the argument values instead of staring at 'a', 'b', and 'c'.}
+            \item{\textbf{Native: }Use a debugger such as GDB (linux), windbg (windows); set breakpoints, inspect registers and memory}
+            \item{\textbf{Java / Android: } Frida (https://frida.re), and other runtime instrumentation tools}
+          \end{itemize}
+          \item{Observe other program effects: Network activity (Wireshark / tcpdump), system calls (strace), ...}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Goodbye garbage collection}
+    \framesubtitle{... when everything is just a sea of bytes}
+    \begin{itemize}
+        \item{\textbf{Pointers:} One register or memory location can have the address of another}
+    \end{itemize}
+    \vspace{5mm}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+        \begin{leftwordgroup}{}
+		      \bitbox{12}{string: "Go Bucks", null-terminated} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+    \begin{itemize}
+        \item{Interpretation of values in memory depends on \textbf{endianness} (little: 0x000003E8, big 0xE8030000)}
+        \item{0x3E8 is referencing the first character in the string (0x3E8 = 1000)}
+    \end{itemize}
+    
+\end{frame}
+
 
 \section{Useful Tools and What They Do}
 \begin{frame}
