@@ -72,11 +72,12 @@
 \begin{frame}
     \titlepage % Print the title page as the first slide
     \begin{tikzpicture}[overlay]
-        \node[anchor=south east, yshift=-2cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.15\paperwidth]{logo.png}};
+        \node[anchor=south east, yshift=-1cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.15\paperwidth]{logo.png}};
     \end{tikzpicture}
     \begin{itemize}
         \item \textbf{Don't forget to start recording}
         \item Slides are on https://wiki.osucyber.club
+        \item \small{Some content inspired by: Rowan Hart (Purdue), Stephen Tong (Georgia Tech)}
     \end{itemize}
 \end{frame}
 } % end background template
@@ -152,18 +153,19 @@
     \frametitle{About computers}
     \framesubtitle{CSE 3421 in 3 minutes}
     \begin{itemize}
-	\item{"Get me 8 bytes at address 0x42, store it in register 1"}
+	      \item{"Move the integer '3' into register 2"}
+        \item{"Get me 4 bytes at address 1012, store them in register 1"}
         \item{"Add register 1 to register 2, put the result in register 1"}
-        \item{"Get me 8 bytes using address in register 1, put the result in register 1}
+        \item{"Get me 1 byte using address in register 1, put the result in register 1}
         \item{"Move the data from register 1 into register 2"}
-	\item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
+	      \item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
     \end{itemize}
     \vspace{5mm}
     \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
         \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
         \bytefieldsetup{}%
         \begin{leftwordgroup}{Memory}
-		\bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
+		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
         \end{leftwordgroup}\\[1ex]
     \end{bytefield}
 \end{frame}
@@ -208,7 +210,7 @@
     \begin{itemize}
         \item{No useful variable names}
         \item{No documentation}
-        \item{Obfuscated control flow (compilers can make all kinds of optimizing decisiions)}
+        \item{Obfuscated control flow}
         \item{But... we usually still have strings!}
     \end{itemize}
 \end{frame}
@@ -246,29 +248,31 @@
 \subsection{General Techniques for Reversing}
 \begin{frame}
     \frametitle{Techniques for Reversing}
+    \framesubtitle{Static Analysis}
     \begin{itemize}
-        \item{Static Analysis}
+        \item{Stare at what you have, make sense of it piece-by-piece}
+        \item{Use static analysis tools (decompilers, libraries such as \texttt{angr}, ...)}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Techniques for Reversing}
+    \framesubtitle{Dynamic Analysis}
+    \begin{itemize}
+        \item{Run it and see what happens; Modify inputs to see how behavior changes}
+        \item{Debuggers, and other runtime inspection tools (Run it, pause it, poke around)}
         \begin{itemize}
-          \item{Stare at what you have, make sense of it piece-by-piece}
-          \item{Use static analysis tools (decompilers, libraries such as \texttt{angr}, ...)}
+          \item{\textbf{Web: }Set breakpoints in browser developer tools, look at the argument values instead of staring at 'a', 'b', and 'c'.}
+          \item{\textbf{Native: }Use a debugger such as GDB (linux), windbg (windows); set breakpoints, inspect registers and memory}
+          \item{\textbf{Java / Android: } Frida (https://frida.re), and other runtime instrumentation tools}
         \end{itemize}
-        \item{Dynamic Analysis}
-        \begin{itemize}
-          \item{Run it and see what happens; Modify inputs to see how behavior changes}
-          \item{Debuggers, and other runtime inspection tools (Run it, pause it, poke around)}
-          \begin{itemize}
-            \item{\textbf{Web: }Set breakpoints in chrome, look at the argument values instead of staring at 'a', 'b', and 'c'.}
-            \item{\textbf{Native: }Use a debugger such as GDB (linux), windbg (windows); set breakpoints, inspect registers and memory}
-            \item{\textbf{Java / Android: } Frida (https://frida.re), and other runtime instrumentation tools}
-          \end{itemize}
-          \item{Observe other program effects: Network activity (Wireshark / tcpdump), system calls (strace), ...}
-        \end{itemize}
+        \item{Observe other program effects: Network activity (Wireshark / tcpdump), system calls (strace), ...}
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Goodbye garbage collection}
-    \framesubtitle{... when everything is just a sea of bytes}
+    \framesubtitle{... when memory is just a sea of bytes}
     \begin{itemize}
         \item{\textbf{Pointers:} One register or memory location can have the address of another}
     \end{itemize}
@@ -280,16 +284,51 @@
 		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
         \end{leftwordgroup}\\[1ex]
         \begin{leftwordgroup}{}
-		      \bitbox{12}{string: "Go Bucks", null-terminated} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
+		      \bitbox{9}{"Go Bucks", null-terminated} & \bitbox{3}{} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
         \end{leftwordgroup}\\[1ex]
     \end{bytefield}
     \begin{itemize}
         \item{Interpretation of values in memory depends on \textbf{endianness} (little: 0x000003E8, big 0xE8030000)}
         \item{0x3E8 is referencing the first character in the string (0x3E8 = 1000)}
     \end{itemize}
-    
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{The Stack}
+    \begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{itemize}
+				\item{\textbf{The stack grows toward LOW addresses}}
+				\item{\textbf{Base pointer:} Holds the highest address in the current stack frame}
+				\item{\textbf{Stack pointer:} Holds the current 'top' of the stack (lowest address currently in use)} 
+			\end{itemize}	
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{drawstack}[scale=.5, text=invtext]
+				\tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+				\stacktop{}
+				\startframe
+				\cell{char input[32]} \cellcom{base - 44}
+				\cell{int \textit{c}} \cellcom{base - 12}
+				\cell{int \textit{b}} \cellcom{base - 8}
+				\cell{int \textit{a}} \cellcom{base - 4}
+				\cell{base pointer for foo()} \cellptr{base}
+				\bcell{Return addr into foo()} \cellcom{base + 8}
+				\finishframe{function \\ {\tt bar ()}}
+				\startframe
+				\cell{int \textit{x}} \cellcom{base - 4}
+				\cell{base pointer for main()} \cellptr{base}
+				\bcell{Return addr into main()} \cellcom{base + 8}
+				\finishframe{function \\ {\tt foo ()}}
+				\startframe
+				\cell{Saved base pointer} \cellptr{base}
+				\bcell{Return address} \cellcom{base + 8}
+				\finishframe{function \\ {\tt main ()}}
+				\stackbottom{}
+			\end{drawstack}
+		\end{column}
+	\end{columns}
+\end{frame}
 
 \section{Useful Tools and What They Do}
 \begin{frame}
