@@ -32,13 +32,18 @@ to reveal its designs, architecture, code, or to extract knowledge from the obje
   - **JIT-ed languages:** You write Javascript, there's an 'just-in-time' interpreter (?) in the web browser that takes your JS and just-in-time (JIT) compiles it into machine code, and runs it...
   - **Intrepreted languages:** An interpreter directly runs source code, implementing all the behaviors of the language. Ex. The most common Python implementation, CPython (should i show a python sample? maybe)
   - Often some combination of above
+  - TURTLE IMAGE
 
 ## Reversing... what are you given?
 - Native applications: You get machine code (executable, or shared library)... you can use a **disassembler** to look at the instructions. There are also 'decompiler' tools available that will decompile to a C-like representation.
 - Java applications: You'll usually get a .jar (or .apk if Android) containing **bytecode**... you can look at the bytecode or there are also good tools for 'decompiling' back to nearly-runnable but often hard-to-read Java code.
 - Web applications: You can always view Javascript (+ HTML + CSS) in the browser (see the web talk). But minification tools make it hard to understand what is going on.
 
-## DEMO?: Toss Spotify in Ghidra, 2221 components.jar in jadx decompiler, view minified JS on osu.edu
+- Sometimes even the binaries are hard to get... i.e. iOS they are encrypted, you might need authenication or some kind of device specific token... there are tools to pull these off rooted devices though
+- Don't forget to look for source... don't waste time reversing code that is freely available online (especially open source libraries)
+
+## Andrew DEMO 1: **Something native** and relatively pretty, Grubhub in jadx decompiler, view minified JS on osu.edu
+- don't run random APKs off the internet, but you can decompile them
 
 ## Reversing... what do we lose? (Why is reversing hard?)
 Usually...
@@ -60,7 +65,7 @@ Usually...
   - Run it and see what happens (You control a *lot* of input. Press buttons repeatedly, What happens if you disconnect it from the internet? )
   - Debuggers, other runtime inspection tools (Run it, pause it and poke around)
     - Web: Set breakpoints in Chrome, look at the arguments instead of staring at f(a, b, c) - backtraces are your new best friend
-    - Native: Use a debugger such as GDB (linux), windbg (windows) - set breakpoints at addresses, look at registers
+    - Native: Use a debugger such as GDB (linux), windbg (windows) - set breakpoints at addresses, look at registers. strace ('it shows many system-related operations, like file i/o & networking')
       - See also: GEF for GDB
     - Java / Android: https://frida.re/ (also useful for native), there's some other tools like this too
   - I/O interception: Web debugging proxies, wireshark, tcpdump
@@ -70,32 +75,46 @@ Usually...
 - We aren't going to teach you Javascript, Java, Python, etc. (but if you have a question of course we'll help)
 - If you need to reverse a interpreted program, it will be very avantageous to have experience in that language.
 
+
+## Memory, Pointers, Stack (?) 
+- Cool diagram - show one spot in memory has the 'address' of another spot... with an arrow between?
+- They ain't really references tho
+- And the stack...
+
 ## Assembly Intro
 
 - disclaimer: i grade for 2421 and love assembly more than necessary
+- like programming language for hardware
 
-- push/pop
+These are the basic operations
+- "They work on registers"
+- push/pop - stack
 - mov
 - call
 - add/sub/mul/xor/shl (plus some signed/unsigned variants)
 - control flow: cmp, test, cmp (jle, jge, jne, je)
 
-- how to call functions: the stack, conventions
-- what is heap?
-
-
-## Native Code - Why do we care about C
-- tl;dr we don't want to look at assembly all day
-- First of all, lots of things are actually written in C - Linux kernel, macOS kernel (darwin)... and many more in C derivatives (C++) - web browsers
-- C is a popular 'high level' language... it has a relatively simple syntax that can represent
-essentially any native program regardless of what language it was written in. (compiled C++ programs decompile to C, it's just not pretty). C has very few abstractions on top of assembly, C++ has many on top of C.
-  - C has variables, but no classes. Assembly has registers and memory but no variables.
+- Can't teach you assembly in an hour, and there are lots of online references for assembly
+  - https://www.felixcloutier.com/x86/
+  - learn it as you go
+- If you see a function and you click on it and there's nothing there, google it. 'thunk'
 
 ## C Intro
 - idk throw some stuff on the slide, explain what it does
 - pointers are hard, but like super important (slide with arrows in memory??)
+- here's some stuff in C, here's some assembly
 
-## Demo: C program => Run to show what it does => Decompile and compare with original C
+## Native Code - Why do we care about C
+- tl;dr we don't want to look at assembly all day
+- First of all, lots of things are actually written in C, it's popular and a reasonably direct correlation with assembly
+- C has very few abstractions on top of assembly, C++ has many on top of C.
+  - C has variables, but no classes. Assembly has registers and memory but no variables.
+
+## ANDREW Demo 2: C program => Run to show what it does => Decompile and compare with original C
+- Executable formats / Loaders
+  - Linux uses ELF; There are other formats
+  - Among many other things, it says how to lay out the sea of bytes w/ data, other libraries, etc.
+  - Click memory map. There are different sections. or /proc/self/map.
 - at some point lets note intel vs. att syntax
 - stripped / unstripped?
 
@@ -110,15 +129,11 @@ essentially any native program regardless of what language it was written in. (c
 - print
 - disassemble 
 
-## Demo: GDB
-
-## Executable formats / Loaders / system calls
-- Linux uses ELF
-- There are other formats
-- What happens when you run a program (e.g. how does a linker/loader work)? I got asked this in an interview
-- GOT table? maybe leave for pwn
-- probably talk about libc somewhere
-- system calls are cool
+## Kyle DEMO 3: GDB - it's going to be ugly-ish decompilation but EZPZ dynamic analysis
+- pop open in ghidra, ooh it's nasty
+- time for gdb
+- set breakpoint
+- win
 
 ## Future topics
 - uhhhhh
@@ -126,3 +141,9 @@ essentially any native program regardless of what language it was written in. (c
 - fuzzing?
 
 ## SET UP YOUR VM FOR NEXT WEEK
+
+## defer for pwn
+
+- calling conventions / register usage
+- endianness
+- 
