@@ -96,7 +96,7 @@
     \begin{tikzpicture}[overlay]
         \node[anchor=south east, yshift=-4cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.3\paperwidth]{shirt1.png}};
         \node[left = of shirt1] (shirt2) {\includegraphics[width=0.3\paperwidth]{shirt2.png}};
-        \node[anchor=north east, yshift=-4cm, xshift=-2cm] (sticker) at (current page.north east) {\includegraphics[width=0.3\paperwidth]{sticker.png}};
+        \node[anchor=north east, yshift=-3cm, xshift=-2cm] (sticker) at (current page.north east) {\includegraphics[width=0.2\paperwidth]{sticker.png}};
     \end{tikzpicture}
 \end{frame}
 
@@ -270,6 +270,8 @@
     \end{itemize}
 \end{frame}
 
+\section{Reversing native code}
+\subsection{Memory and the Stack}
 \begin{frame}[fragile]
     \frametitle{Goodbye garbage collection}
     \framesubtitle{... when memory is just a sea of bytes}
@@ -330,11 +332,92 @@
 	\end{columns}
 \end{frame}
 
-\section{Useful Tools and What They Do}
+\subsection{x86 in 5 minutes}
+\begin{frame}
+    \frametitle{x86 Assembly Introduction}
+    \begin{itemize}
+        \item{tl;dr look up an instruction when you don't know what it does: https://www.felixcloutier.com/x86/}
+				\item{\textbf{push/pop} - put things on stack / take things off stack}
+				\item{\textbf{mov} - move data between registers and registers, or registers and memory}
+				\item{\textbf{call, jmp} - call a function, jump to code at another address}
+				\item{\textbf{add/sub/mul/xor/shl/shr/ and many more} - arithmetic, bitwise operations}
+				\item{\textbf{conditions and control flow: cmp, test, jle, jge, jne, je} - comparisons, conditional jumps}
+				\item{\textbf{Size suffixes: } movq = 8 bytes, movl = 4 bytes, movw = 2 bytes, movb = 1 byte}
+				\item{\textbf{Intel vs. ATT syntax} - Ghidra uses Intel-ish}
+				\begin{itemize}
+					\item{movq dst, src}
+					\item{movq \%rax, \%rbx - moves from rbx into rax}
+					\item{movq [\%rax], \%rbx - moves from rbx into memory at the address in rax}
+				\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{C in 5 minutes}
+\begin{frame}[fragile]
+    \frametitle{C Intro}
+    \begin{itemize}
+        \item{Assembly is very verbose and hard to understand. C is easier.}
+		\end{itemize}		
+    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
+#include <stdio.h>
+void main(void) {
+	int x = 5;
+	int y = 42;
+
+	// Get the memory address of a variable
+	int *x_ptr = &x;
+
+	// Do address arithmetic
+	int *ptr2 = x_ptr + 1; // adds sizeof(int) to x_ptr
+	char *ptr2c = (char*)x_ptr + 4; // points to the same location
+
+	// Get memory at an address ('dereference')
+  // Because ptr2 is int*, we interpret the bytes as an int
+  int mem = *ptr2;
+  printf("ptr2: %p ptr2c: %p value: %d\n", ptr2, ptr2c, mem);
+}
+		\end{minted}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Demo 2}
+\end{frame}
+
+\subsection{Reversing with GDB}
+\begin{frame}
+	\frametitle{Reversing with GDB}
+  \begin{itemize}
+		\item{\textbf{Set breakpoints: }b *0x1234}
+    \item{\textbf{Single-step through a program: } \texttt{step/next}}
+    \item{\textbf{Change the value of a register: } \texttt{set \%rax = 1234}}
+		\item{\textbf{Display memory: } \texttt{x/32x \%rsp} prints 32 bytes in hex, x/s prints as a string}
+		\item{\textbf{... and more: } Google "gdb quick reference"}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Demo 3}
+\end{frame}
+
+\section{Useful Tools, Recommended Challenges}
 \begin{frame}
     \frametitle{Tools}
     \begin{itemize}
-        \item{tbd}
+        \item{Native code}
+				\begin{itemize}
+					\item{Static: Ghidra, objdump; Python libraries: angr, pwntools; there may be plugins which help reversing native code compiled from C++ or other languages}
+					\item{Dynamic: GDB (linux), windbg (Windows), strace, frida; GEF for GDB}
+				\end{itemize}
+				\item{Javascript}
+				\begin{itemize}
+					\item{Chrome Developer Tools, ...}
+				\end{itemize}
+				\item{Java / Android}
+				\begin{itemize}
+					\item{Static: There are many decompilers. The one I demoed is jadx-gui.}
+					\item{Dynamic: Frida, ???}
+				\end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -342,14 +425,20 @@
 \begin{frame}
     \frametitle{Recommended Challenges}
     \begin{itemize}
+				\item{\textbf{dump}: 20pt}
+				\item{\textbf{java.lang.String}: 50pt}
+				\item{\textbf{SoftwareShop}: 75pt}
+				\item{\textbf{ransomware}: 180pt}
         \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Possible Future Topics}
+    \frametitle{Next week}
     \begin{itemize}
-	\item{\textbf{topics}}
+			\item{\textbf{Highly Recommended: } Prepare a Linux x86 VM before next week}
+			\item{https://wiki.osucyber.club/Bootcamp-CTF/Getting-Started/Environment}
+			\item{I will be releasing a few more x86 reversing challenges this week}
     \end{itemize}
 \end{frame}
 
