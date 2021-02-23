@@ -18,6 +18,9 @@
 \usepackage{bytefield}
 
 
+\hypersetup{
+    colorlinks=true,
+}
 \usemintedstyle{paraiso-dark}
 \graphicspath{ {./images/}{../../slides-source-dep/images/} }
 \DeclareGraphicsExtensions{.png,.pdf}
@@ -52,10 +55,10 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Introduction to Reverse Engineering]{\huge \textbf{Introduction to Reverse Engineering}} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Introduction to Binary Exploitation]{\huge \textbf{Introduction to Binary Exploitation}} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Andrew Haberlandt} % Your name
-\date{Feburary 9, 2021} % Date, can be changed to a custom date
+\date{Feburary 23, 2021} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -77,28 +80,19 @@
     \begin{itemize}
         \item \textbf{Don't forget to start recording}
         \item Slides are on https://wiki.osucyber.club
-        \item \small{Some content adapted from: Rowan Hart (Purdue), Stephen Tong (Georgia Tech)}
+        \item \small{Some content adapted from: Nathan Peercy (Purdue)}
     \end{itemize}
 \end{frame}
 } % end background template
 
+
 \begin{frame}
     \frametitle{Announcements}
     \begin{itemize}
-        \item{Shirts and Stickers are In! (while supplies last)}
-        \begin{itemize}
-            \item{Get 500 points in the Bootcamp CTF to get a sticker}
-            \item{Get 2000 points in the Bootcamp CTF to get a T-shirt}
-        \end{itemize}
-        \item{Our CTF team got 40th out of 1000+ teams. Watch for announcements about future CTFs, and be sure to join us!}
-        \item \textbf{Next Week:} Intro to Binary Exploitation (a.k.a. pwn)
+        \item \textbf{Next Week:} Group solve time focusing on pwn
     \end{itemize}
-    \begin{tikzpicture}[overlay]
-        \node[anchor=south east, yshift=-4cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.3\paperwidth]{shirt1.png}};
-        \node[left = of shirt1] (shirt2) {\includegraphics[width=0.3\paperwidth]{shirt2.png}};
-        \node[anchor=north east, yshift=-3cm, xshift=-2cm] (sticker) at (current page.north east) {\includegraphics[width=0.2\paperwidth]{sticker.png}};
-    \end{tikzpicture}
 \end{frame}
+
 
 \setbeamercolor{background canvas}{bg=almostblack}
 \setbeamertemplate{section in toc}[square]
@@ -107,317 +101,206 @@
     \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
-\section{What is reverse engineering?}
+
+\section{What is binary exploitation?}
 \begin{frame}
-    \frametitle{What is reverse engineering?}
+    \frametitle{What is binary exploitation?}
     \begin{itemize}
-        \item{\textbf{"...the process by which a man-made object is deconstructed to reveal its designs, architecture, code, or to extract knowledge from the object"}}
-        \item{tl;dr Figure out how something works}
+        \item{Make a [compiled/binary] program do something it wasn't intended to do}
+        \item{Usually this means the goal is arbitrary code execution}
+        \item{pwn is awesome but pwn is hard. You'll eventually need a good understanding of:}
         \begin{itemize}
-            \item{Often with limited or no documentation}
-            \item{With a required level of understanding that varies depending on the task}
-        \end{itemize}
-        \item{Examples}
-        \begin{itemize}
-            \item{Figure out how a co-workers code works after they got fired}
-            \item{Figure out how a game communicates in a multiplayer session... for 'research' of course}
-            \item{Figure out how a streaming service plays audio/video... (note: piracy bad)}
+            \item{Assembly}
+            \item{C}
+            \item{Operating systems}
         \end{itemize}
     \end{itemize}
 \end{frame}
 
-\subsection{About Computers}
-\begin{frame}
-    \frametitle{About computers}
-    \framesubtitle{CSE 3421 in 3 minutes}
-    \begin{itemize}
-        \item{A computer understands a defined set of 'instructions', which each perform some small operation (arithmetic, data movement, I/O, control flow)}
-        \begin{itemize}
-            \item{x86 vs. ARM vs. [...]}
-        \end{itemize}
-        \item{Programmers should assume instructions run \textbf{'serially'} (one at a time, in sequence)}
-        \item{Programs can interact with memory as a 'sea of byte-addressable bits'}
-    \end{itemize}
-    \vspace{5mm}
-    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
-        \bytefieldsetup{}%
-        \begin{leftwordgroup}{Memory}
-            \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
-        \end{leftwordgroup}\\[1ex]
-    \end{bytefield}
-\end{frame}
-
 
 \begin{frame}
-    \frametitle{About computers}
-    \framesubtitle{CSE 3421 in 3 minutes}
+    \frametitle{Why}
     \begin{itemize}
-	      \item{"Move the integer '3' into register 2"}
-        \item{"Get me 4 bytes at address 1012, store them in register 1"}
-        \item{"Add register 1 to register 2, put the result in register 1"}
-        \item{"Get me 1 byte using address in register 1, put the result in register 1}
-        \item{"Move the data from register 1 into register 2"}
-	      \item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
+        \item{Native code is everywhere}
+        \item{No really, EVERY APPLICATION EVER ULTIMATELY ENDS UP RUNNING MACHINE CODE}
     \end{itemize}
-    \vspace{5mm}
-    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
-        \bytefieldsetup{}%
-        \begin{leftwordgroup}{Memory}
-		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
-        \end{leftwordgroup}\\[1ex]
-    \end{bytefield}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Machine code is everything}
-    \framesubtitle{or, everything is machine code}
-    \begin{itemize}
-	    \item{\textbf{Native applications (compiled code):} Compile to machine code, distribute to users, then they run it}
-        \item{\textbf{JIT-ed languages:} You write Javascript, the browser 'just-in-time' translates your Javascript into machine code, and then runs it.}
-	\item{\textbf{Interpreted languages:} An interpreter (which is a native application) directly runs the source code, line by line, implementing all the behaviors of the language. e.g. CPython (the most common Python implementation)}
-	\item{\textbf{Often, a combination of the above...} The line is blurry.}
-    \end{itemize}
-
-\end{frame}
 
 \begin{frame}
     \begin{tikzpicture}[overlay]
-        \node[anchor=south east, yshift=-5cm, xshift=-4cm] (shirt1) at (current page.south east) {\includegraphics[width=0.5\paperwidth]{turtle.png}};
+        \node[anchor=south east, yshift=-5cm, xshift=-4cm] (turtle) at (current page.south east) {\includegraphics[width=0.5\paperwidth]{turtle.png}};
     \end{tikzpicture}
-
 \end{frame}
 
-\subsection{What does a reversing problem look like? What's missing?}
+
 \begin{frame}
-    \frametitle{What does a reversing problem look like?}
+    \frametitle{Why}
     \begin{itemize}
-	    \item{\textbf{Native applications (compiled code):} You get machine code (usually in the form of an executable or shared library). You can use a \textbf{disassembler} to look at the instructions. A \textbf{decompiler} attempts to create C-like code from the machine code.}
-        \item{\textbf{Java applications: } You'll usually get a .jar (or .apk if Android) containing 'Java bytecode', which can usually be decompiled back to nearly-runnable but hard-to-read Java}
-	\item{\textbf{Web applications: } You can always view Javascript (+ HTML + CSS) in the browser (see the web talk). But minification/obfuscation tools can make it hard to understand.}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Demo 1}
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{What's usually missing in a reverse engineering problem?}
-    \framesubtitle{}
-    \begin{itemize}
-        \item{No useful variable names}
-        \item{No documentation}
-        \item{Obfuscated control flow}
-        \item{But... we usually still have strings!}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Minified JS Example}
-    \framesubtitle{}
-    % \column{.5\textwidth}
-    \textbf{Pretty-Printed from Carmen} \\
-    \begin{minted}[gobble=4]{javascript}
-    function yn() {
-      const e = Ba.t("This assignment is dropped and will not be considered in the total calculation")
-      const t = s()("#only_consider_graded_assignments").attr("checked")
-      const a = t ? "current" : "final"
-      const n = ENV.group_weighting_scheme
-      const o = !ENV.exclude_total
-      const r = _n()
-      s()(".dropped").attr("aria-label", "")
-      s()(".dropped").attr("title", "")
-      s()(".student_assignment").find(".points_possible").attr("aria-label", "")
-      l.a.forEach(r.assignmentGroups, e=>{
-          l.a.forEach(e[a].submissions, e=>{
-              s()("#submission_" + e.submission.assignment_id).toggleClass("dropped", !!e.drop)
-          })
-      })
-      s()(".dropped").attr("aria-label", e)
-      s()(".dropped").attr("title", e)
-      o && gn(r, a, n)
-    }
-    \end{minted}
-
-%\column{.5\textwidth} 
-\end{frame}
-
-\subsection{General Techniques for Reversing}
-\begin{frame}
-    \frametitle{Techniques for Reversing}
-    \framesubtitle{Static Analysis}
-    \begin{itemize}
-        \item{Stare at what you have, make sense of it piece-by-piece}
-        \item{Use static analysis tools (decompilers, libraries such as \texttt{angr}, ...)}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Techniques for Reversing}
-    \framesubtitle{Dynamic Analysis}
-    \begin{itemize}
-        \item{Run it and see what happens; Modify inputs to see how behavior changes}
-        \item{Debuggers, and other runtime inspection tools (Run it, pause it, poke around)}
+        \item{GOAL: Take over ('pwn') a machine}
         \begin{itemize}
-          \item{\textbf{Web: }Set breakpoints in browser developer tools, look at the argument values instead of staring at 'a', 'b', and 'c'.}
-          \item{\textbf{Native: }Use a debugger such as GDB (linux), windbg (windows); set breakpoints, inspect registers and memory}
-          \item{\textbf{Java / Android: } Frida (https://frida.re), and other runtime instrumentation tools}
+            \item{If you can run whatever code you want, you can do anything the OS allows that program to do (usually anything the user has access to do)}
+            \item{After you have code execution, 'privilege escalation' concerns exploiting (usually) the operating system to gain additional privileges (i.e. normal user -> root access, or sometimes directly to kernel code execution)}
+            \item{Some special programs (ie. sudo) are usually given extra privileges to run as root ("suid programs"); exploit one of these and you get insta-root.}
+            \item{Bug Bounties: \href{https://hackerone.com/valve?type=team}{Valve}, \href{https://bugcrowd.com/tesla}{Tesla}, many others}
         \end{itemize}
-        \item{Observe other program effects: Network activity (Wireshark / tcpdump), system calls (strace), ...}
     \end{itemize}
 \end{frame}
 
-\section{Reversing native code}
-\subsection{Memory and the Stack}
-\begin{frame}[fragile]
-    \frametitle{Goodbye garbage collection}
-    \framesubtitle{... when memory is just a sea of bytes}
+
+\begin{frame}
+    \frametitle{What does it look like to 'pwn' a machine?}
     \begin{itemize}
-        \item{\textbf{Pointers:} One register or memory location can have the address of another}
-    \end{itemize}
-    \vspace{5mm}
-    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
-        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
-        \bytefieldsetup{}%
-        \begin{leftwordgroup}{Memory}
-		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
-        \end{leftwordgroup}\\[1ex]
-        \begin{leftwordgroup}{}
-		      \bitbox{9}{"Go Bucks", null-terminated} & \bitbox{3}{} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
-        \end{leftwordgroup}\\[1ex]
-    \end{bytefield}
-    \begin{itemize}
-        \item{Interpretation of values in memory depends on \textbf{endianness} (little: 0x000003E8, big 0xE8030000)}
-        \item{0x3E8 is referencing the first character in the string (0x3E8 = 1000)}
+        \item{\textbf{Arbitrary code execution}}
+        \begin{itemize}
+            \item{Often demonstrated by: getting a shell (opens on stdin)}
+            \item{"popping calc"}
+            \item{Sometimes in CTF problems: opening and reading a special 'flag' file is sufficient (can do with shell, or not)}
+            \item{After you have code execution, you're often done unless you're the NSA or CIA}
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
-    \frametitle{The Stack}
-    \begin{columns}
-		\begin{column}{0.5\textwidth}
-			\begin{itemize}
-				\item{\textbf{The stack grows toward LOW addresses}}
-				\item{\textbf{Base pointer:} Holds the highest address in the current stack frame}
-				\item{\textbf{Stack pointer:} Holds the current 'top' of the stack (lowest address currently in use)} 
-			\end{itemize}	
-		\end{column}
-		\begin{column}{0.5\textwidth}
-			\begin{drawstack}[scale=.5, text=invtext]
-				\tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
-				\stacktop{}
-				\startframe
-				\cell{char input[32]} \cellcom{base - 44}
-				\cell{int \textit{c}} \cellcom{base - 12}
-				\cell{int \textit{b}} \cellcom{base - 8}
-				\cell{int \textit{a}} \cellcom{base - 4}
-				\cell{base pointer for foo()} \cellptr{base}
-				\bcell{Return addr into foo()} \cellcom{base + 8}
-				\finishframe{function \\ {\tt bar ()}}
-				\startframe
-				\cell{int \textit{x}} \cellcom{base - 4}
-				\cell{base pointer for main()} \cellptr{base}
-				\bcell{Return addr into main()} \cellcom{base + 8}
-				\finishframe{function \\ {\tt foo ()}}
-				\startframe
-				\cell{Saved base pointer} \cellptr{base}
-				\bcell{Return address} \cellcom{base + 8}
-				\finishframe{function \\ {\tt main ()}}
-				\stackbottom{}
-			\end{drawstack}
-		\end{column}
-	\end{columns}
+
+\begin{frame}
+    \frametitle{Demo 1: Reverse shell in Bash}
 \end{frame}
 
-\subsection{x86 in 5 minutes}
+
+\section{OK, how do I get code execution?}
+\subsection{Common vulnerabilities}
 \begin{frame}
-    \frametitle{x86 Assembly Introduction}
+    \frametitle{Common vulnerabilities}
     \begin{itemize}
-        \item{tl;dr look up an instruction when you don't know what it does: https://www.felixcloutier.com/x86/}
-				\item{\textbf{push/pop} - put things on stack / take things off stack}
-				\item{\textbf{mov} - move data between registers and registers, or registers and memory}
-				\item{\textbf{call, jmp} - call a function, jump to code at another address}
-				\item{\textbf{add/sub/mul/xor/shl/shr/ and many more} - arithmetic, bitwise operations}
-				\item{\textbf{conditions and control flow: cmp, test, jle, jge, jne, je} - comparisons, conditional jumps}
-				\item{\textbf{Size suffixes: } movq = 8 bytes, movl = 4 bytes, movw = 2 bytes, movb = 1 byte}
-				\item{\textbf{Intel vs. ATT syntax} - Ghidra uses Intel-ish}
-				\begin{itemize}
-					\item{movq dst, src}
-					\item{movq \%rax, \%rbx - moves from rbx into rax}
-					\item{movq [\%rax], \%rbx - moves from rbx into memory at the address in rax}
-				\end{itemize}
+        \item{Command injection}
+        \item{Memory corruption: a broad category}
+        \item{Off-by-one errors}
+        \item{Race conditions}
+        \item{(lack of) Input validation}
+        \item{Miscellaneous logic bugs}
     \end{itemize}
 \end{frame}
 
-\subsection{C in 5 minutes}
-\begin{frame}[fragile]
-    \frametitle{C Intro}
+
+\subsection{Command Injection}
+\begin{frame}
+    \frametitle{Command Injection}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Demo 2: Command injection + pwntools}
+\end{frame}
+
+
+\subsection{Logic Bugs}
+\begin{frame}
+    \frametitle{Logic Bugs}
     \begin{itemize}
-        \item{Assembly is very verbose and hard to understand. C is easier.}
-		\end{itemize}		
-    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
-#include <stdio.h>
-void main(void) {
-	int x = 5;
-	int y = 42;
-
-	// Get the memory address of a variable
-	int *x_ptr = &x;
-
-	// Do address arithmetic
-	int *ptr2 = x_ptr + 1; // adds sizeof(int) to x_ptr
-	char *ptr2c = (char*)x_ptr + 4; // points to the same location
-
-	// Get memory at an address ('dereference')
-  // Because ptr2 is int*, we interpret the bytes as an int
-  int mem = *ptr2;
-  printf("ptr2: %p ptr2c: %p value: %d\n", ptr2, ptr2c, mem);
-}
-		\end{minted}
-\end{frame}
-
-\begin{frame}
-	\frametitle{Demo 2}
-\end{frame}
-
-\subsection{Reversing with GDB}
-\begin{frame}
-	\frametitle{Reversing with GDB}
-  \begin{itemize}
-		\item{\textbf{Set breakpoints: }b *0x1234}
-    \item{\textbf{Single-step through a program: } \texttt{step/next}}
-    \item{\textbf{Change the value of a register: } \texttt{set \%rax = 1234}}
-		\item{\textbf{Display memory: } \texttt{x/32x \%rsp} prints 32 bytes in hex, x/s prints as a string}
-		\item{\textbf{... and more: } Google "gdb quick reference"}
-  \end{itemize}
+        \item{Most are unintentional, Intentional logic bugs are essentially "backdoors".}
+        \item{Leaving in debug options: "bypass this security measure by adding debug=1"}
+        \item{Program gets confused about state when receiving packets/commands out-of-order}
+        \item{TODO: need more logic bug examples}
+    \end{itemize}
 \end{frame}
 
 
+\subsection{Memory Corruption Bugs}
 \begin{frame}
-	\frametitle{Demo 3}
-\end{frame}
-
-\section{Useful Tools, Recommended Challenges}
-\begin{frame}
-    \frametitle{Tools}
+    \frametitle{Memory Corruption Bugs}
     \begin{itemize}
-        \item{Native code}
-				\begin{itemize}
-					\item{Static: Ghidra, objdump; Python libraries: angr, pwntools; there may be plugins which help reversing native code compiled from C++ or other languages}
-					\item{Dynamic: GDB (linux), windbg (Windows), strace, frida; GEF for GDB}
-				\end{itemize}
-				\item{Javascript}
-				\begin{itemize}
-					\item{Chrome Developer Tools, ...}
-				\end{itemize}
-				\item{Java / Android}
-				\begin{itemize}
-					\item{Static: There are many decompilers. The one I demoed is jadx-gui.}
-					\item{Dynamic: Frida, ???}
-				\end{itemize}
+        \item{Memory is a byte-addressable array of bytes}
+        \item{If a user can write somewhere they are not intended to, it can be the cause of a memory corruption bug}
+        \item{The important question is "can we overwrite anything important?"}
+        \begin{itemize}
+            \item{To answer, need to know some things about where stuff is in memory}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Simplest example: Stack buffer overflow into another variable}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{More examples: What if we can write anywhere? (Where should we write?)}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{More examples: Semi-arbitrary write (controlled array index)}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Simple example: Stack buffer overflow into return address}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{1990s exploitation}
+    \begin{itemize}
+        \item{Just put your code somewhere you know the address of, and then overwrite the return address so that it holds the address of your code}
+        \item{When the function returns, you win}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Demo 3: Return to the 1990s + pwntools}
+\end{frame}
+
+
+\subsection{ROP}
+\begin{frame}
+    \frametitle{Moden memory protections have entered the chat}
+    \begin{itemize}
+        \item{You can't just write your code onto the stack and jump to it. The stack is not executable.}
+        \item{We need to be more creative}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{ROP}
+    \begin{itemize}
+        \item{We don't just control the return address, we can keep writing and we control the whole stack}
+        \item{We can return to specific locations that do useful things and then come back ('gadgets')}
+        \begin{itemize}
+            \item{pop rdi; ret;}
+        \end{itemize}
+        \item{Chain these together and you can make syscalls, etc.}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{So you want to make a syscall}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Common Defenses}
+    \begin{itemize}
+        \item{ASLR - Address Space Layout Randomization}
+        \item{PIE - Position Independent Executable (DEMO?)}
+        \item{NX - Non-eXecutable memory}
+        \item{Stack Canaries}
+        \item{Many more...}
+    \end{itemize}
+\end{frame}
+
+
+\section{Useful Tools, Recommended Challenges, Next Week}
+\begin{frame}
+    \frametitle{Useful Tools}
+    \begin{itemize}
+            \item{GDB with GEF, pwndbg}
+            \item{Ghidra and RE tools}
+            \item{python3 with pwntools}
+            \item{checksec, ROPGadget, Ropper}
     \end{itemize}
 \end{frame}
 
@@ -425,21 +308,19 @@ void main(void) {
 \begin{frame}
     \frametitle{Recommended Challenges}
     \begin{itemize}
-				\item{\textbf{dump}: 20pt}
-				\item{\textbf{java.lang.String}: 50pt}
-				\item{\textbf{SoftwareShop}: 75pt}
-				\item{\textbf{ransomware}: 180pt}
+        \item{\textbf{speedrun series}: 8-100 points, starts from basics and gradually becomes more difficult/more modern}
         \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
     \end{itemize}
 \end{frame}
 
+
 \begin{frame}
-    \frametitle{Next week}
+    \frametitle{Next Week}
     \begin{itemize}
-			\item{\textbf{Highly Recommended: } Prepare a Linux x86 VM before next week}
-			\item{https://wiki.osucyber.club/Bootcamp-CTF/Getting-Started/Environment}
-			\item{I will be releasing a few more x86 reversing challenges this week}
+        \item{\textbf{Highly Recommended: } Attempt some pwn challenges and have questions ready to go}
+        \item{\url{https://bootcamp.osucyber.club/}}
     \end{itemize}
 \end{frame}
+
 
 \end{document}
