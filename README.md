@@ -1,11 +1,7 @@
 # bootcamp-resources
 Presentations for Spring 2021 Bootcamp CTF
 
-| Date (tentative)  | Topic | Presenters
-|-------------------|-------|--------|
-| 1/19/21    | Bootcamp CTF Kickoff + Web Exploitation 1 | Andrew |
-| 1/26/21           | Intro to Cryptography | Yu-Shiang |
-| 2/2/21 | TBA | TBA |
+Consult the wiki for the schedule: https://wiki.osucyber.club
 
 
 Useful resources for presentations:
