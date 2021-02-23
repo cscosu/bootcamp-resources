@@ -49,6 +49,7 @@ to reveal its designs, architecture, code, or to extract knowledge from the obje
 Usually...
 - Useless variable names
   - For native: variables can be in a register, on the stack, heap, etc.
+  - just a sea of bytes
 - No documentation (no inline comments)
 - Obfuscated control flow (compilers can make all kinds of optimizing decisions)
   - Function calls may no longer be function calls
