@@ -110,7 +110,7 @@
         \item{Usually this means the goal is arbitrary code execution}
         \item{pwn is awesome but pwn is hard. You'll eventually need a good understanding of:}
         \begin{itemize}
-            \item{Assembly}
+            \item{Assembly (we'll use x86)}
             \item{C}
             \item{Operating systems}
         \end{itemize}
@@ -130,6 +130,7 @@
 \begin{frame}
     \begin{tikzpicture}[overlay]
         \node[anchor=south east, yshift=-5cm, xshift=-4cm] (turtle) at (current page.south east) {\includegraphics[width=0.5\paperwidth]{turtle.png}};
+        \node[below=of turtle] {\tiny{Meme credit: Stephen Tong of Georgia Tech's Greyhat Club}};
     \end{tikzpicture}
 \end{frame}
 
@@ -139,10 +140,10 @@
     \begin{itemize}
         \item{GOAL: Take over ('pwn') a machine}
         \begin{itemize}
-            \item{If you can run whatever code you want, you can do anything the OS allows that program to do (usually anything the user has access to do)}
-            \item{After you have code execution, 'privilege escalation' concerns exploiting (usually) the operating system to gain additional privileges (i.e. normal user -> root access, or sometimes directly to kernel code execution)}
-            \item{Some special programs (ie. sudo) are usually given extra privileges to run as root ("suid programs"); exploit one of these and you get insta-root.}
-            \item{Bug Bounties: \href{https://hackerone.com/valve?type=team}{Valve}, \href{https://bugcrowd.com/tesla}{Tesla}, many others}
+            \item{We want \textbf{Arbitrary Code Execution}. If you can run whatever code you want, you can do anything the OS allows that process to do (usually anything the user can do)}
+            \item{After you have code execution, \textbf{privilege escalation} concerns exploiting (usually) the operating system to gain additional privileges (i.e. normal user root access, or sometimes directly to kernel code execution)}
+            \item{Some special programs (ie. sudo) are usually given extra privileges to run as root ("suid programs"); exploit one of these and your code runs as root}
+            \item{Examples: bug bounties like \href{https://hackerone.com/valve?type=team}{Valve}, \href{https://bugcrowd.com/tesla}{Tesla}, many others}
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -153,8 +154,8 @@
     \begin{itemize}
         \item{\textbf{Arbitrary code execution}}
         \begin{itemize}
-            \item{Often demonstrated by: getting a shell (opens on stdin)}
-            \item{"popping calc"}
+            \item{Often demonstrated by: getting a shell}
+            \item{``popping calc"}
             \item{Sometimes in CTF problems: opening and reading a special 'flag' file is sufficient (can do with shell, or not)}
             \item{After you have code execution, you're often done unless you're the NSA or CIA}
         \end{itemize}
@@ -183,13 +184,27 @@
 
 
 \subsection{Command Injection}
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Command Injection}
+    \begin{itemize}
+        \item{Programmers are lazy and often 'shell out' to run another program}
+        \item{If an attacker controls part of the command being run, they can use features of the shell (usually bash) to end the previous command and inject their own}
+    \end{itemize}
+    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
+#include <stdio.h>
+void get_log_file(char *name) {
+  char cmd[50];
+  sprintf(cmd, "cat log_file_%s", name);
+  system(cmd);
+}
+    \end{minted}
+    \begin{itemize}
+        \item{ie. if you can cause the program to call get\_log\_file with something like\linebreak\texttt{; cat /etc/passwd}\linebreak then you can run other commands}
+    \end{itemize}
 \end{frame}
 
-
 \begin{frame}
-    \frametitle{Demo 2: Command injection + pwntools}
+    \frametitle{Demo 2: Command injection}
 \end{frame}
 
 
@@ -198,24 +213,81 @@
     \frametitle{Logic Bugs}
     \begin{itemize}
         \item{Most are unintentional, Intentional logic bugs are essentially "backdoors".}
-        \item{Leaving in debug options: "bypass this security measure by adding debug=1"}
+        \item{Leaving in debug options: ex. bypass access control by adding debug=1}
         \item{Program gets confused about state when receiving packets/commands out-of-order}
-        \item{TODO: need more logic bug examples}
+        \begin{itemize}
+            \item 
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
 
 \subsection{Memory Corruption Bugs}
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Memory Corruption Bugs}
     \begin{itemize}
         \item{Memory is a byte-addressable array of bytes}
         \item{If a user can write somewhere they are not intended to, it can be the cause of a memory corruption bug}
-        \item{The important question is "can we overwrite anything important?"}
+        \item{Everything has a finite size}
+    \end{itemize}
+    \vspace{5mm}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+        \begin{leftwordgroup}{}
+		      \bitbox{9}{"Go Bucks", null-terminated} & \bitbox{3}{} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Memory Corruption Bugs}
+    \begin{itemize}
+        \item{String Functions and length-checks}
         \begin{itemize}
-            \item{To answer, need to know some things about where stuff is in memory}
+            \item{\textbf{strcpy / strncpy:} Arguments are two pointers, copies all characters from one location to the other until it reaches a null byte}
+            \item{\textbf{gets / fgets:} Reads a string from the user (gets uses stdin, fgets can use any file)}
+            \item{\textbf{others: } Most other string functions rely on the strings being terminated by a null byte and many don't check length}
         \end{itemize}
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Memory Corruption Bugs}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item{The important question is ``can we overwrite anything important?"}
+            \begin{itemize}
+                \item{To answer, need to know some things about where stuff is in memory}
+            \end{itemize}
+            \item{Every function starts by making room for it's own local variables on the stack}
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{drawstack}[scale=.5, text=invtext]
+            \tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+            \stacktop{}
+            \startframe
+            \padding{0}{} \cellcom{base - 44}
+            \padding{4}{char input[32]} 
+            \cell{int \textit{c}} \cellcom{base - 12}
+            \cell{int \textit{b}} \cellcom{base - 8}
+            \cell{int \textit{a}} \cellcom{base - 4}
+            \cell{base pointer for main()} \cellptr{base}
+            \bcell{Return addr into main()} \cellcom{base + 8}
+            \finishframe{function \\ {\tt foo ()}}
+            \startframe
+            \cell{Saved base pointer} \cellptr{base}
+            \bcell{Return address} \cellcom{base + 8}
+            \finishframe{function \\ {\tt main ()}}
+            \stackbottom{}
+        \end{drawstack}
+    \end{column}
+    \end{columns}
 \end{frame}
 
 
