@@ -32,4 +32,4 @@ License
 
 Ask individual authors.
 
-Slide template is released under the MIT License, credit 'Cyber Security Club @ Ohio State'.
+Slide template is released under the MIT License, credit 'Cyber Security Club @ Ohio State' and 'Purdue b01lers'.
