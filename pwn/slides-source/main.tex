@@ -1,0 +1,445 @@
+\documentclass{beamer}
+
+\mode<presentation> { \usetheme{gruvbox} }
+\setbeamerfont{frametitle}{size=\huge}
+
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+%\usepackage{listings}             % Include the listings-package
+\usepackage{minted}
+\usepackage{tikz}
+\usepackage{drawstack}
+\usetikzlibrary{calc,shapes.callouts,shapes.arrows,chains,positioning,fit,shapes, arrows.meta, arrows}
+\usepackage{verbatimbox}
+\usepackage{tcolorbox}
+\usepackage{forloop}
+\usepackage{seqsplit}
+\usepackage{bytefield}
+
+
+\usemintedstyle{paraiso-dark}
+\graphicspath{ {./images/}{../../slides-source-dep/images/} }
+\DeclareGraphicsExtensions{.png,.pdf}
+
+\newcommand{\pointthis}[2]{
+    \tikz[remember picture,baseline]{\node[anchor=base,inner sep=0,outer sep=0]%
+    (#1) {\underline{#1}};\node[overlay,rectangle callout,%
+    callout relative pointer={(0.2cm,0.7cm)},fill=green!50] at ($(#1.north)+(-.5cm,-1.4cm)$) {#2};}%
+}%
+
+\newcounter{loopcntr}
+\newcommand{\rpt}[2][1]{%
+  \forloop{loopcntr}{0}{\value{loopcntr}<#1}{#2}%
+}
+
+\newcommand{\hash}[1]{{\ttfamily\seqsplit{#1}}}
+
+\newlength{\bitlabelwidth}
+\newcommand{\rotbitheader}[1]{%
+  \tiny
+  \settowidth{\bitlabelwidth}{\quad 9999}%
+  \rotatebox[origin=B]{60}{\makebox[\bitlabelwidth][r]{#1}}%
+}
+
+\newenvironment{zerohyphen}
+ {\global\chardef\savedhyphenchar=\hyphenchar\font % save the current hyphenchar
+  \lefthyphenmin=1 \righthyphenmin=1 % no limits on hyphenation
+  \hyphenchar\font=23 }
+ {\par\hyphenchar\font=\savedhyphenchar}% eject the paragraph and restore
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Introduction to Reverse Engineering]{\huge \textbf{Introduction to Reverse Engineering}} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Andrew Haberlandt} % Your name
+\date{Feburary 9, 2021} % Date, can be changed to a custom date
+
+\begin{document}
+
+{ % this brace groups the background template with just the first slide
+\usebackgroundtemplate{%
+    \begin{tikzpicture}
+        \path [outer color = blue!5, inner color = blue!1]
+        (0,0) rectangle (\paperwidth,\paperheight);
+        \node[anchor=south west, inner sep=0,line width=0,draw,text width=\paperwidth,fill=almostblack] at (0,0) {\textcolor{darkgray}{\hash{00110110100011010001101101101111100010010111011001110101001111101110100101100101001000001010111000001100110000111010100100001110100010110101001010100001011100000110011111111111100110011010100100101111110111110011101011110010100001001101101010111111011000010110011101110110110000000101101101111110111010111001110010111100110110100100111110111011010110111010101101000011000100011101001011010101111101010000001000001111011111000100111001010000101010000010111001101111101111011111011001110100101101100000011000011110110111010111110001111001110011011110101001001011110001101010110000110110100011000101110110101001110100011101100111101000001001111110000111100010010110000111110101010100000000001110000001010001110110001111000100001100010110101011100011101110101100111111010111101000100111000011110110100011000110111011001101101111111100001010101010010100100101110101011111010110100111011000101010111000010110010010011000010110011000111000110110000010110001100110100011000000111100110110101011100100011110100011011010001101000110110110111110001001011101100111010100111110111010010110010100100000101011100000110011000011101010010000111010001011010100101010000101110000011001111111111110011001101010010010111111011111001110101111001010000100110110101011111101100001011001110111011011000000010110110111111011101011100111001011110011011010010011111011101101011011101010110100001100010001110100101101010111110101000000100000111101111100010011100101000010101000001011100110111110111101111101100111010010110110000001100001111011011101011111000111100111001101111010100100101111000110101011000011011010001100010111011010100111010001110110011110100000100111111000011110001001011000011111010101010000000000111000000101000111011000111100010000110001011010101110001110111010110011111101011110100010011100001111011010001100011011101100110110111111110000101010101001010010010111010101111101011010011101100010101011100001011001001001100001011001100011100011011000001011000110011010001100000011110011011010101110010001111010}}};
+    \end{tikzpicture}
+}
+
+
+\begin{frame}
+    \titlepage % Print the title page as the first slide
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-1cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.15\paperwidth]{logo.png}};
+    \end{tikzpicture}
+    \begin{itemize}
+        \item \textbf{Don't forget to start recording}
+        \item Slides are on https://wiki.osucyber.club
+        \item \small{Some content adapted from: Rowan Hart (Purdue), Stephen Tong (Georgia Tech)}
+    \end{itemize}
+\end{frame}
+} % end background template
+
+\begin{frame}
+    \frametitle{Announcements}
+    \begin{itemize}
+        \item{Shirts and Stickers are In! (while supplies last)}
+        \begin{itemize}
+            \item{Get 500 points in the Bootcamp CTF to get a sticker}
+            \item{Get 2000 points in the Bootcamp CTF to get a T-shirt}
+        \end{itemize}
+        \item{Our CTF team got 40th out of 1000+ teams. Watch for announcements about future CTFs, and be sure to join us!}
+        \item \textbf{Next Week:} Intro to Binary Exploitation (a.k.a. pwn)
+    \end{itemize}
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-4cm, xshift=-2cm] (shirt1) at (current page.south east) {\includegraphics[width=0.3\paperwidth]{shirt1.png}};
+        \node[left = of shirt1] (shirt2) {\includegraphics[width=0.3\paperwidth]{shirt2.png}};
+        \node[anchor=north east, yshift=-3cm, xshift=-2cm] (sticker) at (current page.north east) {\includegraphics[width=0.2\paperwidth]{sticker.png}};
+    \end{tikzpicture}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=almostblack}
+\setbeamertemplate{section in toc}[square]
+\begin{frame}
+    \frametitle{Overview} % Table of contents slide, comment this block out to remove it
+    \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+\section{What is reverse engineering?}
+\begin{frame}
+    \frametitle{What is reverse engineering?}
+    \begin{itemize}
+        \item{\textbf{"...the process by which a man-made object is deconstructed to reveal its designs, architecture, code, or to extract knowledge from the object"}}
+        \item{tl;dr Figure out how something works}
+        \begin{itemize}
+            \item{Often with limited or no documentation}
+            \item{With a required level of understanding that varies depending on the task}
+        \end{itemize}
+        \item{Examples}
+        \begin{itemize}
+            \item{Figure out how a co-workers code works after they got fired}
+            \item{Figure out how a game communicates in a multiplayer session... for 'research' of course}
+            \item{Figure out how a streaming service plays audio/video... (note: piracy bad)}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{About Computers}
+\begin{frame}
+    \frametitle{About computers}
+    \framesubtitle{CSE 3421 in 3 minutes}
+    \begin{itemize}
+        \item{A computer understands a defined set of 'instructions', which each perform some small operation (arithmetic, data movement, I/O, control flow)}
+        \begin{itemize}
+            \item{x86 vs. ARM vs. [...]}
+        \end{itemize}
+        \item{Programmers should assume instructions run \textbf{'serially'} (one at a time, in sequence)}
+        \item{Programs can interact with memory as a 'sea of byte-addressable bits'}
+    \end{itemize}
+    \vspace{5mm}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+            \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {00} {00} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{About computers}
+    \framesubtitle{CSE 3421 in 3 minutes}
+    \begin{itemize}
+	      \item{"Move the integer '3' into register 2"}
+        \item{"Get me 4 bytes at address 1012, store them in register 1"}
+        \item{"Add register 1 to register 2, put the result in register 1"}
+        \item{"Get me 1 byte using address in register 1, put the result in register 1}
+        \item{"Move the data from register 1 into register 2"}
+	      \item{"If the value in register 1 is nonzero, jump to code at address 0x1337"} 
+    \end{itemize}
+    \vspace{5mm}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Machine code is everything}
+    \framesubtitle{or, everything is machine code}
+    \begin{itemize}
+	    \item{\textbf{Native applications (compiled code):} Compile to machine code, distribute to users, then they run it}
+        \item{\textbf{JIT-ed languages:} You write Javascript, the browser 'just-in-time' translates your Javascript into machine code, and then runs it.}
+	\item{\textbf{Interpreted languages:} An interpreter (which is a native application) directly runs the source code, line by line, implementing all the behaviors of the language. e.g. CPython (the most common Python implementation)}
+	\item{\textbf{Often, a combination of the above...} The line is blurry.}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \begin{tikzpicture}[overlay]
+        \node[anchor=south east, yshift=-5cm, xshift=-4cm] (shirt1) at (current page.south east) {\includegraphics[width=0.5\paperwidth]{turtle.png}};
+    \end{tikzpicture}
+
+\end{frame}
+
+\subsection{What does a reversing problem look like? What's missing?}
+\begin{frame}
+    \frametitle{What does a reversing problem look like?}
+    \begin{itemize}
+	    \item{\textbf{Native applications (compiled code):} You get machine code (usually in the form of an executable or shared library). You can use a \textbf{disassembler} to look at the instructions. A \textbf{decompiler} attempts to create C-like code from the machine code.}
+        \item{\textbf{Java applications: } You'll usually get a .jar (or .apk if Android) containing 'Java bytecode', which can usually be decompiled back to nearly-runnable but hard-to-read Java}
+	\item{\textbf{Web applications: } You can always view Javascript (+ HTML + CSS) in the browser (see the web talk). But minification/obfuscation tools can make it hard to understand.}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Demo 1}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{What's usually missing in a reverse engineering problem?}
+    \framesubtitle{}
+    \begin{itemize}
+        \item{No useful variable names}
+        \item{No documentation}
+        \item{Obfuscated control flow}
+        \item{But... we usually still have strings!}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Minified JS Example}
+    \framesubtitle{}
+    % \column{.5\textwidth}
+    \textbf{Pretty-Printed from Carmen} \\
+    \begin{minted}[gobble=4]{javascript}
+    function yn() {
+      const e = Ba.t("This assignment is dropped and will not be considered in the total calculation")
+      const t = s()("#only_consider_graded_assignments").attr("checked")
+      const a = t ? "current" : "final"
+      const n = ENV.group_weighting_scheme
+      const o = !ENV.exclude_total
+      const r = _n()
+      s()(".dropped").attr("aria-label", "")
+      s()(".dropped").attr("title", "")
+      s()(".student_assignment").find(".points_possible").attr("aria-label", "")
+      l.a.forEach(r.assignmentGroups, e=>{
+          l.a.forEach(e[a].submissions, e=>{
+              s()("#submission_" + e.submission.assignment_id).toggleClass("dropped", !!e.drop)
+          })
+      })
+      s()(".dropped").attr("aria-label", e)
+      s()(".dropped").attr("title", e)
+      o && gn(r, a, n)
+    }
+    \end{minted}
+
+%\column{.5\textwidth} 
+\end{frame}
+
+\subsection{General Techniques for Reversing}
+\begin{frame}
+    \frametitle{Techniques for Reversing}
+    \framesubtitle{Static Analysis}
+    \begin{itemize}
+        \item{Stare at what you have, make sense of it piece-by-piece}
+        \item{Use static analysis tools (decompilers, libraries such as \texttt{angr}, ...)}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Techniques for Reversing}
+    \framesubtitle{Dynamic Analysis}
+    \begin{itemize}
+        \item{Run it and see what happens; Modify inputs to see how behavior changes}
+        \item{Debuggers, and other runtime inspection tools (Run it, pause it, poke around)}
+        \begin{itemize}
+          \item{\textbf{Web: }Set breakpoints in browser developer tools, look at the argument values instead of staring at 'a', 'b', and 'c'.}
+          \item{\textbf{Native: }Use a debugger such as GDB (linux), windbg (windows); set breakpoints, inspect registers and memory}
+          \item{\textbf{Java / Android: } Frida (https://frida.re), and other runtime instrumentation tools}
+        \end{itemize}
+        \item{Observe other program effects: Network activity (Wireshark / tcpdump), system calls (strace), ...}
+    \end{itemize}
+\end{frame}
+
+\section{Reversing native code}
+\subsection{Memory and the Stack}
+\begin{frame}[fragile]
+    \frametitle{Goodbye garbage collection}
+    \framesubtitle{... when memory is just a sea of bytes}
+    \begin{itemize}
+        \item{\textbf{Pointers:} One register or memory location can have the address of another}
+    \end{itemize}
+    \vspace{5mm}
+    \begin{bytefield}[bitwidth = 1.5em, leftcurly = .]{16}
+        \bitheader[bitformatting=\rotbitheader, lsb=1000, endianness = little]{1000-1015}\\
+        \bytefieldsetup{}%
+        \begin{leftwordgroup}{Memory}
+		      \bitboxes*{1}{{47} {6F} {20} {42} {75} {63} {6B} {72} {00} {00} {00} {00} {E8} {03} {00} {00} }
+        \end{leftwordgroup}\\[1ex]
+        \begin{leftwordgroup}{}
+		      \bitbox{9}{"Go Bucks", null-terminated} & \bitbox{3}{} & \bitbox{4}{\small{Addr (0x3E8)}\\ \tiny{(Little endian)}}
+        \end{leftwordgroup}\\[1ex]
+    \end{bytefield}
+    \begin{itemize}
+        \item{Interpretation of values in memory depends on \textbf{endianness} (little: 0x000003E8, big 0xE8030000)}
+        \item{0x3E8 is referencing the first character in the string (0x3E8 = 1000)}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The Stack}
+    \begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{itemize}
+				\item{\textbf{The stack grows toward LOW addresses}}
+				\item{\textbf{Base pointer:} Holds the highest address in the current stack frame}
+				\item{\textbf{Stack pointer:} Holds the current 'top' of the stack (lowest address currently in use)} 
+			\end{itemize}	
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{drawstack}[scale=.5, text=invtext]
+				\tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+				\stacktop{}
+				\startframe
+				\cell{char input[32]} \cellcom{base - 44}
+				\cell{int \textit{c}} \cellcom{base - 12}
+				\cell{int \textit{b}} \cellcom{base - 8}
+				\cell{int \textit{a}} \cellcom{base - 4}
+				\cell{base pointer for foo()} \cellptr{base}
+				\bcell{Return addr into foo()} \cellcom{base + 8}
+				\finishframe{function \\ {\tt bar ()}}
+				\startframe
+				\cell{int \textit{x}} \cellcom{base - 4}
+				\cell{base pointer for main()} \cellptr{base}
+				\bcell{Return addr into main()} \cellcom{base + 8}
+				\finishframe{function \\ {\tt foo ()}}
+				\startframe
+				\cell{Saved base pointer} \cellptr{base}
+				\bcell{Return address} \cellcom{base + 8}
+				\finishframe{function \\ {\tt main ()}}
+				\stackbottom{}
+			\end{drawstack}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\subsection{x86 in 5 minutes}
+\begin{frame}
+    \frametitle{x86 Assembly Introduction}
+    \begin{itemize}
+        \item{tl;dr look up an instruction when you don't know what it does: https://www.felixcloutier.com/x86/}
+				\item{\textbf{push/pop} - put things on stack / take things off stack}
+				\item{\textbf{mov} - move data between registers and registers, or registers and memory}
+				\item{\textbf{call, jmp} - call a function, jump to code at another address}
+				\item{\textbf{add/sub/mul/xor/shl/shr/ and many more} - arithmetic, bitwise operations}
+				\item{\textbf{conditions and control flow: cmp, test, jle, jge, jne, je} - comparisons, conditional jumps}
+				\item{\textbf{Size suffixes: } movq = 8 bytes, movl = 4 bytes, movw = 2 bytes, movb = 1 byte}
+				\item{\textbf{Intel vs. ATT syntax} - Ghidra uses Intel-ish}
+				\begin{itemize}
+					\item{movq dst, src}
+					\item{movq \%rax, \%rbx - moves from rbx into rax}
+					\item{movq [\%rax], \%rbx - moves from rbx into memory at the address in rax}
+				\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{C in 5 minutes}
+\begin{frame}[fragile]
+    \frametitle{C Intro}
+    \begin{itemize}
+        \item{Assembly is very verbose and hard to understand. C is easier.}
+		\end{itemize}		
+    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
+#include <stdio.h>
+void main(void) {
+	int x = 5;
+	int y = 42;
+
+	// Get the memory address of a variable
+	int *x_ptr = &x;
+
+	// Do address arithmetic
+	int *ptr2 = x_ptr + 1; // adds sizeof(int) to x_ptr
+	char *ptr2c = (char*)x_ptr + 4; // points to the same location
+
+	// Get memory at an address ('dereference')
+  // Because ptr2 is int*, we interpret the bytes as an int
+  int mem = *ptr2;
+  printf("ptr2: %p ptr2c: %p value: %d\n", ptr2, ptr2c, mem);
+}
+		\end{minted}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Demo 2}
+\end{frame}
+
+\subsection{Reversing with GDB}
+\begin{frame}
+	\frametitle{Reversing with GDB}
+  \begin{itemize}
+		\item{\textbf{Set breakpoints: }b *0x1234}
+    \item{\textbf{Single-step through a program: } \texttt{step/next}}
+    \item{\textbf{Change the value of a register: } \texttt{set \%rax = 1234}}
+		\item{\textbf{Display memory: } \texttt{x/32x \%rsp} prints 32 bytes in hex, x/s prints as a string}
+		\item{\textbf{... and more: } Google "gdb quick reference"}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Demo 3}
+\end{frame}
+
+\section{Useful Tools, Recommended Challenges}
+\begin{frame}
+    \frametitle{Tools}
+    \begin{itemize}
+        \item{Native code}
+				\begin{itemize}
+					\item{Static: Ghidra, objdump; Python libraries: angr, pwntools; there may be plugins which help reversing native code compiled from C++ or other languages}
+					\item{Dynamic: GDB (linux), windbg (Windows), strace, frida; GEF for GDB}
+				\end{itemize}
+				\item{Javascript}
+				\begin{itemize}
+					\item{Chrome Developer Tools, ...}
+				\end{itemize}
+				\item{Java / Android}
+				\begin{itemize}
+					\item{Static: There are many decompilers. The one I demoed is jadx-gui.}
+					\item{Dynamic: Frida, ???}
+				\end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Recommended Challenges}
+    \begin{itemize}
+				\item{\textbf{dump}: 20pt}
+				\item{\textbf{java.lang.String}: 50pt}
+				\item{\textbf{SoftwareShop}: 75pt}
+				\item{\textbf{ransomware}: 180pt}
+        \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Next week}
+    \begin{itemize}
+			\item{\textbf{Highly Recommended: } Prepare a Linux x86 VM before next week}
+			\item{https://wiki.osucyber.club/Bootcamp-CTF/Getting-Started/Environment}
+			\item{I will be releasing a few more x86 reversing challenges this week}
+    \end{itemize}
+\end{frame}
+
+\end{document}
