@@ -152,6 +152,11 @@
 \begin{frame}
     \frametitle{What does it look like to 'pwn' a machine?}
     \begin{itemize}
+        \item{\textbf{Real-life examples}}
+        \begin{itemize}
+            \item{Buffer overflow in CSGO/Half-Life/TF2 client, allowing a malicious server to run code just by viewing the server's info https://hackerone.com/reports/470520}
+            \item{Read an arbitrary file on a Half-Life server: https://hackerone.com/reports/590279}
+        \end{itemize}
         \item{\textbf{Arbitrary code execution}}
         \begin{itemize}
             \item{Often demonstrated by: getting a shell}
@@ -168,7 +173,7 @@
 \end{frame}
 
 
-\section{OK, how do I get code execution?}
+\section{How to get code execution}
 \subsection{Common vulnerabilities}
 \begin{frame}
     \frametitle{Common vulnerabilities}
@@ -215,9 +220,7 @@ void get_log_file(char *name) {
         \item{Most are unintentional, Intentional logic bugs are essentially "backdoors".}
         \item{Leaving in debug options: ex. bypass access control by adding debug=1}
         \item{Program gets confused about state when receiving packets/commands out-of-order}
-        \begin{itemize}
-            \item 
-        \end{itemize}
+        \item{An example: "[steam client] Opening a specific steam:// url overwrites files at an arbitrary location" https://hackerone.com/reports/667242}
     \end{itemize}
 \end{frame}
 
@@ -291,31 +294,92 @@ void get_log_file(char *name) {
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Simplest example: Stack buffer overflow into another variable}
+    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
+int main() {
+  char buf1[16];
+  char buf2[16];
+
+  // get a (arbitrary-length) string from the user
+  gets(buf1);
+
+  // print the strings back to the user
+  printf("buf1: %s\n", buf1);
+  printf("buf2: %s\n", buf2);
+
+  // check for win condition
+  if (strcmp(buf2, "win") == 0) {
+    system("/bin/sh");
+  }
+}
+    \end{minted}
 \end{frame}
 
-
-\begin{frame}
-    \frametitle{More examples: What if we can write anywhere? (Where should we write?)}
+\begin{frame}[fragile]
+    \frametitle{Simplest example: Stack buffer overflow into another variable}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item{We can change the value of other variables on the stack!}
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{drawstack}[scale=.5, text=invtext]
+            \tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+            \stacktop{} \cellcomL{Low Addresses}
+            \startframe
+            \padding{4}{char buf1[16]} 
+            \padding{4}{char buf2[16]} 
+            \finishframe{function \\ {\tt main ()}}
+            \padding{0}{} \cellcomL{High Addresses}
+        \end{drawstack}
+    \end{column}
+    \end{columns}
 \end{frame}
 
-
 \begin{frame}
-    \frametitle{More examples: Semi-arbitrary write (controlled array index)}
+    \frametitle{Demo: Stack buffer overflow and pwntools}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{OK, but we want code execution}
+    \framesubtitle{Stack buffer overflow into return address}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+    \begin{minted}[tabsize=2, fontsize=\footnotesize]{c}
+int main() {
+    char buf1[16];
 
-\begin{frame}
-    \frametitle{Simple example: Stack buffer overflow into return address}
+    // get a (arbitrary-length)
+    // string from user
+    gets(buf1);
+}
+    \end{minted}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{drawstack}[scale=.5, text=invtext]
+            \tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+            \stacktop{} \cellcomL{Low Addresses}
+            \startframe
+            \padding{0}{}
+            \padding{4}{char buf1[16]}
+            \cell{Saved RBP} \cellcomL{Address of caller's stack frame base}
+            \bcell{Return addr} \cellcomL{Address to jump to, in caller}
+            \finishframe{function \\ {\tt main ()}}
+            \draw[->, line width=0.5mm, xshift=-3cm, yshift=-1cm, color=red] (0,0) -- (0,-2) node[midway, left, text=red] {Writes toward high addresses};
+        \end{drawstack}
+    \end{column}
+    \end{columns}
 \end{frame}
 
 
 \begin{frame}
     \frametitle{1990s exploitation}
     \begin{itemize}
+        \item{You control where the program goes when the current function returns}
         \item{Just put your code somewhere you know the address of, and then overwrite the return address so that it holds the address of your code}
-        \item{When the function returns, you win}
+        \item{When the function returns, your code runs}
     \end{itemize}
 \end{frame}
 
@@ -327,29 +391,70 @@ void get_log_file(char *name) {
 
 \subsection{ROP}
 \begin{frame}
-    \frametitle{Moden memory protections have entered the chat}
+    \frametitle{Modern memory protections have entered the chat}
     \begin{itemize}
-        \item{You can't just write your code onto the stack and jump to it. The stack is not executable.}
+        \item{You can't just write your code onto the stack and jump to it. The stack is not normally executable.}
         \item{We need to be more creative}
     \end{itemize}
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{ROP}
-    \begin{itemize}
-        \item{We don't just control the return address, we can keep writing and we control the whole stack}
-        \item{We can return to specific locations that do useful things and then come back ('gadgets')}
-        \begin{itemize}
-            \item{pop rdi; ret;}
-        \end{itemize}
-        \item{Chain these together and you can make syscalls, etc.}
-    \end{itemize}
+        \begin{columns}
+            \begin{column}{0.5\textwidth}
+                \begin{itemize}
+                    \item{We don't just control the return address, we can keep writing and we control the whole stack}
+                    \item{We can return to specific locations that do useful things and then return again ('gadgets')}
+                    \begin{itemize}
+                        \item{pop rdi; ret;}
+                        \item{pop rdx; pop rax; ret;}
+                    \end{itemize}
+                    \item{Chain these together to control all registers and you can eventually make syscalls, etc.}
+                \end{itemize}
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                \begin{drawstack}[scale=.5, text=invtext]
+                    \tiny % can also use any from https://tex.stackexchange.com/questions/107057/adjusting-font-size-with-tikz-picture
+                    \stacktop{} \cellcomL{Low Addresses}
+                    \startframe
+                    \padding{0}{}
+                    \padding{4}{char buf1[16]}
+                    \cell{Saved RBP} \cellcomL{Address of caller's stack frame base}
+                    \bcell{Return addr} \cellcomL{Address to jump to}
+                    \finishframe{function \\ {\tt main ()}}
+                    \bcell{evil data} \cellcomL{Whatever your gadget needs on the stack}
+                    \bcell{Return addr} \cellcomL{ANOTHER address to jump to}
+                    \bcell{evil data} \cellcomL{Whatever your gadget needs on the stack}
+                    \bcell{evil data} \cellcomL{Whatever your gadget needs on the stack}
+                    \bcell{Return addr} \cellcomL{ANOTHER address to jump to}
+                \end{drawstack}
+            \end{column}
+            \end{columns}
 \end{frame}
 
 
 \begin{frame}
-    \frametitle{So you want to make a syscall}
+    \frametitle{More on ROP}
+    \begin{itemize}
+        \item{https://docs.pwntools.com/en/dev/rop/rop.html}
+        \item{If there is interest we may do another ROP talk}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{More examples of memory corruption}
+    \begin{itemize}
+        \item{Some memory bugs can lead to arbitrary read/write}
+        \begin{itemize}
+            \item{Can you overwrite an entry in the Global Offset Table (GOT) - addresses of code in dynamically-loaded libraries}
+            \item {Can you leak the address of something else important?}
+        \end{itemize}
+        \item{Controlled array index}
+        \begin{itemize}
+            \item{You can read/write beyond the bounds of an array, without corrupting everything in between.}
+        \end{itemize}
+    \end{itemize}
 \end{frame}
 
 
@@ -381,7 +486,7 @@ void get_log_file(char *name) {
     \frametitle{Recommended Challenges}
     \begin{itemize}
         \item{\textbf{speedrun series}: 8-100 points, starts from basics and gradually becomes more difficult/more modern}
-        \item{Also, any challenge 25 pt or less should be solvable before we talk about that category}
+        \item{\textbf{speedrun0, 0.25, 0.5, and 1} are \textit{very} similar to what was demoed today, it progresses from there in small steps}
     \end{itemize}
 \end{frame}
 
