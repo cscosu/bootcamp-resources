@@ -51,6 +51,9 @@ void get_log_file(char *name) {
   system(cmd);
 }
 ```
+- System function just uses the fork and exec syscalls
+- You can imagine doing many damaging things, or leaking many important files
+- You could even launch a reverse shell!
 
 ## DEMO: Command injection + pwntools
 
@@ -70,11 +73,12 @@ void get_log_file(char *name) {
 - C program on slide w/ buffer overflow
 - Stack diagram
 
-- But there doesn't seem to be an obvious way to exploit this without a more complex program
+- But there doesn't seem to be an obvious way to exploit this without a more complex program; there won't be a win condition
+  - (you can still make it do unexpected things)
+- Stack layout is up to the compiler, look in Ghidra to actually find out where stuff got put
+- this is essentially speedrun0
 
-### More examples: What if we can write anywhere? (Where should we write?)
-
-### More examples: Semi-arbitrary write (controlled array index)
+### Demo: pwn2 (same as on slide) and pwn3 (overflow into some ints w/ pwntools)
 
 - Ok i'm tired of this, what can we possibly overwrite to give us code execution?
    - a function pointer (or a pointer to some code somewhere that will get run?)
@@ -82,7 +86,7 @@ void get_log_file(char *name) {
       - function pointers on the stack
       - return address
 
-### Simple example: Stack buffer overflow into return address
+### Stack buffer overflow into return address
 - Surprise, there's always a pointer to some code on the stack, it's the return pointer :)
 - C program on slide w/ buffer overflow
 - Stack diagram
@@ -92,6 +96,7 @@ void get_log_file(char *name) {
 - When the function returns, you win.
 
 ## DEMO: Return to the 1990s + pwntools
+- pwntools shellcode generator
 
 ## Modern memory protections have entered the chat
 - you can't just write your code onto the stack and jump to it. the stack is not executable.
@@ -103,11 +108,13 @@ void get_log_file(char *name) {
 - we don't just control the return address, we can keep writing and we control the whole stack
 - we can return to specific locations that do useful things ('gadgets')
     - pop rdi; ret;
-- chain these together and you can make syscalls, etc.
+- chain these together and you can make syscalls, etc. (beyond the scope of this talk)
+    - See: 
 
-## So you want to make a syscall
-- look up how to make a syscall
-- see also: calling conventions for calling a function
+### More examples
+- What if we can write anywhere? (Where should we write?)
+- Semi-arbitrary write (controlled array index)
+- There is no one-size-fits-all solution, you just have to be aware of where you can write and what else is there to corrupt
 
 ## Tools
 
@@ -123,9 +130,3 @@ void get_log_file(char *name) {
 - NX - non-executable memory
 - Stack Canaries
 - ...
-
-## defer for pwn
-
-- calling conventions / register usage
-- endianness
-- 
